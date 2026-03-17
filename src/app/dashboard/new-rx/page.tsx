@@ -21,7 +21,7 @@ export default async function NewRxPage() {
         .eq('id', user.id)
         .single()
 
-    const isProfileIncomplete = !doctor || !doctor.full_name?.trim() || !doctor.clinic_name?.trim()
+    const isProfileIncomplete = !doctor || !doctor.full_name?.trim() || !doctor.degree?.trim() || !doctor.registration_number?.trim() || !doctor.phone?.trim() || !doctor.clinic_name?.trim()
 
     if (isProfileIncomplete) {
         return (

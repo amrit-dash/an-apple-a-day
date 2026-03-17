@@ -45,3 +45,31 @@ export async function signout() {
     await supabase.auth.signOut()
     redirect('/login')
 }
+
+export async function forgotPassword(formData: FormData) {
+    const supabase = await createClient()
+    const email = formData.get('email') as string
+
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: 'http://localhost:3000/reset-password',
+    })
+
+    if (error) {
+        redirect('/forgot-password?message=Could not send reset email')
+    }
+
+    redirect('/forgot-password?message=Check your email for the reset link. Note: If you do not have a real SMTP setup on Supabase, the email will not be sent.')
+}
+
+export async function updatePassword(formData: FormData) {
+    const supabase = await createClient()
+    const password = formData.get('password') as string
+
+    const { error } = await supabase.auth.updateUser({ password })
+
+    if (error) {
+        redirect('/reset-password?message=Could not update password')
+    }
+
+    redirect('/login?message=Password updated successfully, please log in')
+}

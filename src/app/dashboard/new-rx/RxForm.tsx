@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Plus, Trash2, User, Activity, FileDown, RotateCcw, Stethoscope, ChevronDown } from 'lucide-react'
+import { Plus, Trash2, User, Activity, FileDown, RotateCcw, Stethoscope, ChevronDown, X } from 'lucide-react'
 import { toast } from 'sonner'
 import { savePrescription } from '@/app/actions/rx'
 import { createClient } from '@/utils/supabase/client'
@@ -70,29 +70,9 @@ export function RxForm({ doctor, initialPatients }: { doctor: any, initialPatien
         }
     }
 
-    const updateMedicine = (index: number, field: keyof Medicine, value: string | boolean) => {
+    const updateMedicineField = (index: number, field: keyof Medicine, value: string | boolean) => {
         const updated = [...medicines]
-
-        if (field === 'frequency') {
-            if (value === 'Custom') {
-                updated[index].isCustomFreq = true
-                updated[index].frequency = ''
-            } else {
-                updated[index].isCustomFreq = false
-                updated[index].frequency = value as string
-            }
-        } else if (field === 'duration') {
-            if (value === 'Custom') {
-                updated[index].isCustomDur = true
-                updated[index].duration = ''
-            } else {
-                updated[index].isCustomDur = false
-                updated[index].duration = value as string
-            }
-        } else {
-            updated[index] = { ...updated[index], [field]: value }
-        }
-
+        updated[index] = { ...updated[index], [field]: value }
         setMedicines(updated)
 
         if (field === 'name') {
@@ -106,9 +86,41 @@ export function RxForm({ doctor, initialPatients }: { doctor: any, initialPatien
         }
     }
 
-    const handleCustomDurationChange = (index: number, value: string) => {
+    const handleFrequencySelect = (index: number, value: string) => {
         const updated = [...medicines]
-        updated[index].duration = value
+        if (value === 'Custom') {
+            updated[index].isCustomFreq = true
+            updated[index].frequency = ''
+        } else {
+            updated[index].isCustomFreq = false
+            updated[index].frequency = value
+        }
+        setMedicines(updated)
+    }
+
+    const handleDurationSelect = (index: number, value: string) => {
+        const updated = [...medicines]
+        if (value === 'Custom') {
+            updated[index].isCustomDur = true
+            updated[index].duration = ''
+        } else {
+            updated[index].isCustomDur = false
+            updated[index].duration = value
+        }
+        setMedicines(updated)
+    }
+
+    const revertCustomFrequency = (index: number) => {
+        const updated = [...medicines]
+        updated[index].isCustomFreq = false
+        updated[index].frequency = ''
+        setMedicines(updated)
+    }
+
+    const revertCustomDuration = (index: number) => {
+        const updated = [...medicines]
+        updated[index].isCustomDur = false
+        updated[index].duration = ''
         setMedicines(updated)
     }
 
@@ -123,7 +135,7 @@ export function RxForm({ doctor, initialPatients }: { doctor: any, initialPatien
     }
 
     const selectMedSuggestion = (index: number, name: string) => {
-        updateMedicine(index, 'name', name)
+        updateMedicineField(index, 'name', name)
         setMedSuggestions([])
         setActiveMedIndex(null)
     }
@@ -234,8 +246,8 @@ export function RxForm({ doctor, initialPatients }: { doctor: any, initialPatien
                 </div>
                 <div>
                     <h3 className="text-sm font-medium text-slate-500 uppercase tracking-wider mb-0.5">Doctor Details</h3>
-                    <p className="text-slate-900 font-semibold">{doctor.full_name}{doctor.degree ? `, ${doctor.degree}` : ''}</p>
-                    <p className="text-slate-600 text-sm">{doctor.clinic_name}</p>
+                    <p className="text-slate-900 font-semibold">{doctor?.full_name}{doctor?.degree ? `, ${doctor.degree}` : ''}</p>
+                    <p className="text-slate-600 text-sm">{doctor?.clinic_name}</p>
                 </div>
             </div>
 
@@ -354,7 +366,7 @@ export function RxForm({ doctor, initialPatients }: { doctor: any, initialPatien
                                         <input
                                             type="text"
                                             value={med.name}
-                                            onChange={(e) => updateMedicine(index, 'name', e.target.value)}
+                                            onChange={(e) => updateMedicineField(index, 'name', e.target.value)}
                                             onBlur={() => setTimeout(() => setActiveMedIndex(null), 200)}
                                             className="w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm px-4 py-2 border text-slate-900 placeholder-slate-400"
                                             placeholder="e.g. Paracetamol 500mg"
@@ -375,19 +387,27 @@ export function RxForm({ doctor, initialPatients }: { doctor: any, initialPatien
                                     </div>
                                     <div className="w-full md:w-48 relative">
                                         {med.isCustomFreq ? (
-                                            <input
-                                                type="text"
-                                                value={med.frequency}
-                                                onChange={(e) => updateMedicine(index, 'frequency', e.target.value)}
-                                                className="w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm px-4 py-2 border text-slate-900 placeholder-slate-400"
-                                                placeholder="Custom Frequency"
-                                                autoFocus
-                                            />
+                                            <div className="relative w-full flex items-center">
+                                                <input
+                                                    type="text"
+                                                    value={med.frequency}
+                                                    onChange={(e) => updateMedicineField(index, 'frequency', e.target.value)}
+                                                    className="w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm px-4 py-2 border text-slate-900 placeholder-slate-400 pr-8"
+                                                    placeholder="Custom Frequency"
+                                                    autoFocus
+                                                />
+                                                <button
+                                                    onClick={() => revertCustomFrequency(index)}
+                                                    className="absolute right-2 text-slate-400 hover:text-slate-600 bg-white"
+                                                >
+                                                    <X className="w-4 h-4" />
+                                                </button>
+                                            </div>
                                         ) : (
                                             <div className="relative w-full">
                                                 <select
                                                     value={med.frequency}
-                                                    onChange={(e) => updateMedicine(index, 'frequency', e.target.value)}
+                                                    onChange={(e) => handleFrequencySelect(index, e.target.value)}
                                                     className="w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm px-4 py-2 border text-slate-900 bg-white appearance-none pr-8"
                                                 >
                                                     <option value="">Frequency...</option>
@@ -405,24 +425,30 @@ export function RxForm({ doctor, initialPatients }: { doctor: any, initialPatien
                                     </div>
                                     <div className="w-full md:w-40 relative">
                                         {med.isCustomDur ? (
-                                            <div className="relative w-full">
+                                            <div className="relative w-full flex items-center">
                                                 <input
                                                     type="number"
                                                     value={med.duration}
-                                                    onChange={(e) => handleCustomDurationChange(index, e.target.value)}
-                                                    className="w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm pl-4 pr-12 py-2 border text-slate-900 placeholder-slate-400"
+                                                    onChange={(e) => updateMedicineField(index, 'duration', e.target.value)}
+                                                    className="w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm pl-4 pr-16 py-2 border text-slate-900 placeholder-slate-400"
                                                     placeholder="e.g. 10"
                                                     autoFocus
                                                 />
-                                                <span className="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-500 text-sm pointer-events-none">
+                                                <span className="absolute inset-y-0 right-8 flex items-center text-slate-500 text-sm pointer-events-none bg-white">
                                                     days
                                                 </span>
+                                                <button
+                                                    onClick={() => revertCustomDuration(index)}
+                                                    className="absolute right-2 text-slate-400 hover:text-slate-600 bg-white"
+                                                >
+                                                    <X className="w-4 h-4" />
+                                                </button>
                                             </div>
                                         ) : (
                                             <div className="relative w-full">
                                                 <select
                                                     value={med.duration}
-                                                    onChange={(e) => updateMedicine(index, 'duration', e.target.value)}
+                                                    onChange={(e) => handleDurationSelect(index, e.target.value)}
                                                     className="w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm px-4 py-2 border text-slate-900 bg-white appearance-none pr-8"
                                                 >
                                                     <option value="">Duration...</option>

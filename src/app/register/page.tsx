@@ -1,5 +1,6 @@
 import { signup } from '@/app/auth/actions'
 import Link from 'next/link'
+import { GoogleSignInButton } from '@/components/GoogleSignInButton'
 
 export default async function RegisterPage({
     searchParams,
@@ -19,6 +20,18 @@ export default async function RegisterPage({
                     </div>
                     <h2 className="text-2xl font-bold tracking-tight text-slate-900">Create an account</h2>
                 </div>
+
+                <GoogleSignInButton />
+
+                <div className="relative my-6">
+                    <div className="absolute inset-0 flex items-center">
+                        <div className="w-full border-t border-slate-200"></div>
+                    </div>
+                    <div className="relative flex justify-center text-sm">
+                        <span className="bg-white px-2 text-slate-500">Or continue with email</span>
+                    </div>
+                </div>
+
                 <form className="mt-8 space-y-6" action={signup}>
                     <div className="space-y-4">
                         <div>
