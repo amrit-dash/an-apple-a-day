@@ -427,22 +427,25 @@ export function RxForm({ doctor, initialPatients }: { doctor: any, initialPatien
                                         {med.isCustomDur ? (
                                             <div className="relative w-full flex items-center">
                                                 <input
-                                                    type="number"
+                                                    type="text"
+                                                    inputMode="numeric"
+                                                    pattern="[0-9]*"
                                                     value={med.duration}
                                                     onChange={(e) => updateMedicineField(index, 'duration', e.target.value)}
-                                                    className="w-full rounded-lg border-slate-300 shadow-sm focus:border-[#4C8EAB] focus:ring-[#4C8EAB] sm:text-sm pl-4 pr-16 py-2 border text-[#1A202C] placeholder-slate-400"
+                                                    className="w-full rounded-lg border-slate-300 shadow-sm focus:border-[#4C8EAB] focus:ring-[#4C8EAB] sm:text-sm pl-3 pr-20 py-2 border text-[#1A202C] placeholder-slate-400"
                                                     placeholder="e.g. 10"
                                                     autoFocus
                                                 />
-                                                <span className="absolute inset-y-0 right-8 flex items-center text-slate-500 text-sm pointer-events-none bg-white">
-                                                    days
-                                                </span>
-                                                <button
-                                                    onClick={() => revertCustomDuration(index)}
-                                                    className="absolute right-2 text-slate-400 hover:text-slate-600 bg-white"
-                                                >
-                                                    <X className="w-4 h-4" />
-                                                </button>
+                                                <div className="absolute inset-y-0 right-0 flex items-center pr-2 gap-1.5">
+                                                    <span className="text-slate-500 text-sm pointer-events-none">days</span>
+                                                    <button
+                                                        onClick={() => revertCustomDuration(index)}
+                                                        className="text-slate-400 hover:text-slate-600 bg-white"
+                                                        type="button"
+                                                    >
+                                                        <X className="w-4 h-4" />
+                                                    </button>
+                                                </div>
                                             </div>
                                         ) : (
                                             <div className="relative w-full">

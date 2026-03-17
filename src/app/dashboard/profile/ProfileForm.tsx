@@ -26,11 +26,14 @@ type ProfileFormProps = {
 export function ProfileForm({ initialData, userId, authProvider }: ProfileFormProps) {
     const [formData, setFormData] = useState({
         clinic_name: initialData?.clinic_name || '',
-        full_name_degree: (initialData?.full_name ? `${initialData.full_name}${initialData.degree ? `, ${initialData.degree}` : ''}` : ''),
+        full_name: initialData?.full_name || '',
+        degree: initialData?.degree || '',
         clinic_address: initialData?.clinic_address || '',
         phone: initialData?.phone || '',
         registration_number: initialData?.registration_number || '',
     })
+
+    const [currentSignatureUrl, setCurrentSignatureUrl] = useState(initialData?.signature_url)
 
     const [isSaving, setIsSaving] = useState(false)
     const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null)
@@ -62,6 +65,16 @@ export function ProfileForm({ initialData, userId, authProvider }: ProfileFormPr
             setUploadedSignatureUrl(null)
             setUploadedSignatureBlob(null)
             if (fileInputRef.current) fileInputRef.current.value = ''
+        }
+    }
+
+    const handleApplySignature = async () => {
+        if (sigCanvas.current && !sigCanvas.current.isEmpty()) {
+            const signatureDataUrl = sigCanvas.current.getTrimmedCanvas().toDataURL('image/png')
+            const blob = await (await fetch(signatureDataUrl)).blob()
+            setUploadedSignatureBlob(blob)
+            setUploadedSignatureUrl(signatureDataUrl)
+            setSignatureMode('upload')
         }
     }
 
@@ -125,7 +138,7 @@ export function ProfileForm({ initialData, userId, authProvider }: ProfileFormPr
                         .upload(`${userId}.png`, file, { upsert: true, contentType: 'image/png' })
                     if (uploadError) throw uploadError
                     const { data: { publicUrl } } = supabase.storage.from('signatures').getPublicUrl(`${userId}.png`)
-                    signature_url = publicUrl
+                    signature_url = `${publicUrl}?t=${Date.now()}`
                 } else if (signatureMode === 'draw' && sigCanvas.current && !sigCanvas.current.isEmpty()) {
                     const signatureDataUrl = sigCanvas.current.getTrimmedCanvas().toDataURL('image/png')
                     const blob = await (await fetch(signatureDataUrl)).blob()
@@ -135,20 +148,16 @@ export function ProfileForm({ initialData, userId, authProvider }: ProfileFormPr
                         .upload(`${userId}.png`, file, { upsert: true, contentType: 'image/png' })
                     if (uploadError) throw uploadError
                     const { data: { publicUrl } } = supabase.storage.from('signatures').getPublicUrl(`${userId}.png`)
-                    signature_url = publicUrl
+                    signature_url = `${publicUrl}?t=${Date.now()}`
                 }
             }
-
-            const parts = formData.full_name_degree.split(',')
-            const full_name = parts[0]?.trim() || ''
-            const degree = parts.slice(1).join(',').trim() || ''
 
             const { error: dbError } = await supabase
                 .from('doctors')
                 .upsert({
                     id: userId,
-                    full_name,
-                    degree,
+                    full_name: formData.full_name,
+                    degree: formData.degree,
                     clinic_name: formData.clinic_name,
                     clinic_address: formData.clinic_address,
                     phone: formData.phone,
@@ -158,7 +167,13 @@ export function ProfileForm({ initialData, userId, authProvider }: ProfileFormPr
 
             if (dbError) throw dbError
 
+            if (signature_url) {
+                setCurrentSignatureUrl(signature_url)
+            }
+
             toast.success('Profile saved successfully!')
+            setUploadedSignatureUrl(null)
+            setUploadedSignatureBlob(null)
             setShowSignatureEditor(false)
             router.refresh()
         } catch (err: any) {
@@ -199,17 +214,31 @@ export function ProfileForm({ initialData, userId, authProvider }: ProfileFormPr
                         Doctor Information
                     </h3>
 
-                    <div>
-                        <label htmlFor="full_name_degree" className="block text-sm font-medium text-slate-700">Doctor Name & Degree</label>
-                        <input
-                            type="text"
-                            id="full_name_degree"
-                            name="full_name_degree"
-                            value={formData.full_name_degree}
-                            onChange={handleChange}
-                            placeholder="e.g. Dr. John Doe, MBBS"
-                            className="mt-1 block w-full rounded-lg border-slate-300 shadow-sm focus:border-[#4C8EAB] focus:ring-[#4C8EAB] sm:text-sm px-4 py-2 border text-[#1A202C] placeholder-slate-400"
-                        />
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label htmlFor="full_name" className="block text-sm font-medium text-slate-700">Doctor Name</label>
+                            <input
+                                type="text"
+                                id="full_name"
+                                name="full_name"
+                                value={formData.full_name}
+                                onChange={handleChange}
+                                placeholder="e.g. Dr. John Doe"
+                                className="mt-1 block w-full rounded-lg border-slate-300 shadow-sm focus:border-[#4C8EAB] focus:ring-[#4C8EAB] sm:text-sm px-4 py-2 border text-[#1A202C] placeholder-slate-400"
+                            />
+                        </div>
+                        <div>
+                            <label htmlFor="degree" className="block text-sm font-medium text-slate-700">Degree</label>
+                            <input
+                                type="text"
+                                id="degree"
+                                name="degree"
+                                value={formData.degree}
+                                onChange={handleChange}
+                                placeholder="e.g. MBBS, MD"
+                                className="mt-1 block w-full rounded-lg border-slate-300 shadow-sm focus:border-[#4C8EAB] focus:ring-[#4C8EAB] sm:text-sm px-4 py-2 border text-[#1A202C] placeholder-slate-400"
+                            />
+                        </div>
                     </div>
 
                     <div>
@@ -268,9 +297,9 @@ export function ProfileForm({ initialData, userId, authProvider }: ProfileFormPr
                     <div className="pt-4">
                         <label className="block text-sm font-medium text-slate-700 mb-2">Signature</label>
 
-                        {!showSignatureEditor && initialData?.signature_url ? (
+                        {!showSignatureEditor && currentSignatureUrl ? (
                             <div className="border border-slate-200 rounded-xl p-6 flex flex-col items-center justify-center bg-slate-50 space-y-4">
-                                <img src={initialData.signature_url} alt="Current Signature" className="h-20 object-contain" />
+                                <img src={currentSignatureUrl} alt="Current Signature" className="h-20 object-contain" />
                                 <button
                                     type="button"
                                     onClick={() => setShowSignatureEditor(true)}
@@ -298,7 +327,7 @@ export function ProfileForm({ initialData, userId, authProvider }: ProfileFormPr
                                             Draw
                                         </button>
                                     </div>
-                                    {initialData?.signature_url && (
+                                    {currentSignatureUrl && (
                                         <button
                                             type="button"
                                             onClick={() => setShowSignatureEditor(false)}
@@ -344,16 +373,34 @@ export function ProfileForm({ initialData, userId, authProvider }: ProfileFormPr
                                     <span className="text-xs text-slate-500">
                                         {signatureMode === 'draw' ? 'Draw your signature above' : 'Upload an image of your signature'}
                                     </span>
-                                    {(signatureMode === 'draw' || (signatureMode === 'upload' && uploadedSignatureUrl)) && (
-                                        <button
-                                            type="button"
-                                            onClick={handleClearSignature}
-                                            className="text-sm text-red-600 hover:text-red-800 font-medium transition-colors"
-                                        >
-                                            Clear Signature
-                                        </button>
-                                    )}
+                                    <div className="flex items-center gap-2">
+                                        {signatureMode === 'draw' && (
+                                            <button
+                                                type="button"
+                                                onClick={handleApplySignature}
+                                                className="text-sm text-white bg-[#4C8EAB] hover:bg-[#3A738F] px-3 py-1.5 rounded-lg font-medium transition-colors shadow-sm"
+                                            >
+                                                Apply Signature
+                                            </button>
+                                        )}
+                                        {(signatureMode === 'draw' || (signatureMode === 'upload' && uploadedSignatureUrl)) && (
+                                            <button
+                                                type="button"
+                                                onClick={handleClearSignature}
+                                                className="text-sm text-slate-500 hover:text-red-600 font-medium transition-colors px-2 py-1.5"
+                                            >
+                                                Clear
+                                            </button>
+                                        )}
+                                    </div>
                                 </div>
+
+                                {currentSignatureUrl && !uploadedSignatureUrl && signatureMode === 'upload' && (
+                                    <div className="mt-4">
+                                        <p className="text-sm font-medium text-slate-700 mb-2">Current Signature:</p>
+                                        <img src={currentSignatureUrl} alt="Current Signature" className="h-16 border border-slate-200 rounded-lg bg-white p-2" />
+                                    </div>
+                                )}
                             </div>
                         )}
                     </div>

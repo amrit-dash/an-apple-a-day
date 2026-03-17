@@ -135,7 +135,7 @@ export default async function DashboardPage() {
     }
 
     const { data: doctor } = await supabase.from('doctors').select('*').eq('id', user.id).single()
-    const isProfileIncomplete = !doctor || !doctor.full_name?.trim() || !doctor.degree?.trim() || !doctor.registration_number?.trim() || !doctor.phone?.trim() || !doctor.clinic_name?.trim()
+    const isProfileIncomplete = !doctor || !doctor.full_name?.trim() || !doctor.registration_number?.trim() || !doctor.phone?.trim() || !doctor.clinic_name?.trim()
 
     return (
         <div className="space-y-8 pb-10">
