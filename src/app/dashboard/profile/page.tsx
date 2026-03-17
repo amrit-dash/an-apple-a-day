@@ -1,6 +1,6 @@
 import { createClient } from '@/utils/supabase/server'
+import { ProfileForm } from './ProfileForm'
 import { redirect } from 'next/navigation'
-import ProfileForm from './ProfileForm'
 
 export default async function ProfilePage() {
     const supabase = await createClient()
@@ -13,6 +13,7 @@ export default async function ProfilePage() {
         redirect('/login')
     }
 
+    // Fetch doctor profile
     const { data: doctor } = await supabase
         .from('doctors')
         .select('*')
@@ -20,11 +21,14 @@ export default async function ProfilePage() {
         .single()
 
     return (
-        <div className="max-w-3xl mx-auto">
-            <h2 className="text-2xl font-bold tracking-tight text-gray-900 mb-6">Doctor Profile</h2>
-            <div className="rounded-lg bg-white p-6 shadow-sm border border-gray-200">
-                <ProfileForm user={user} initialData={doctor} />
+        <div className="max-w-3xl mx-auto space-y-6">
+            <div>
+                <h2 className="text-2xl font-bold text-gray-900">Doctor Profile</h2>
+                <p className="mt-1 text-sm text-gray-500">
+                    Update your personal and clinic information. This information will appear on your prescriptions.
+                </p>
             </div>
+            <ProfileForm initialData={doctor || null} userId={user.id} />
         </div>
     )
 }
