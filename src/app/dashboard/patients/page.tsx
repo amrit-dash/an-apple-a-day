@@ -47,7 +47,7 @@ export default async function PatientsPage() {
     return (
         <div className="space-y-6">
             <div>
-                <h2 className="text-2xl font-bold tracking-tight text-slate-900">My Patients</h2>
+                <h2 className="text-2xl font-bold tracking-tight text-[#1A202C]">My Patients</h2>
                 <p className="mt-1 text-sm text-slate-500">View and manage your patient records.</p>
             </div>
 

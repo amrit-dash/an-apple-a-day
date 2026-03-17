@@ -209,7 +209,7 @@ export function RxForm({ doctor, initialPatients }: { doctor: any, initialPatien
                     <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
                 </div>
                 <div>
-                    <h3 className="text-xl font-bold text-slate-900 mb-2">Prescription Saved Successfully</h3>
+                    <h3 className="text-xl font-bold text-[#1A202C] mb-2">Prescription Saved Successfully</h3>
                     <p className="text-slate-500 max-w-sm mx-auto">The prescription has been securely saved to your patient's record.</p>
                 </div>
 
@@ -241,12 +241,12 @@ export function RxForm({ doctor, initialPatients }: { doctor: any, initialPatien
         <div className="space-y-8">
             {/* Doctor Info Header */}
             <div className="bg-slate-50 rounded-xl shadow-sm border border-slate-200 p-4 flex items-center gap-4">
-                <div className="p-3 bg-white border border-slate-200 text-indigo-500 rounded-full flex-shrink-0">
+                <div className="p-3 bg-white border border-slate-200 text-[#4C8EAB] rounded-full flex-shrink-0">
                     <Stethoscope className="w-6 h-6" />
                 </div>
                 <div>
                     <h3 className="text-sm font-medium text-slate-500 uppercase tracking-wider mb-0.5">Doctor Details</h3>
-                    <p className="text-slate-900 font-semibold">{doctor?.full_name}{doctor?.degree ? `, ${doctor.degree}` : ''}</p>
+                    <p className="text-[#1A202C] font-semibold">{doctor?.full_name}{doctor?.degree ? `, ${doctor.degree}` : ''}</p>
                     <p className="text-slate-600 text-sm">{doctor?.clinic_name}</p>
                 </div>
             </div>
@@ -255,7 +255,7 @@ export function RxForm({ doctor, initialPatients }: { doctor: any, initialPatien
             <section className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-visible">
                 <div className="border-b border-slate-100 bg-slate-50/50 px-6 py-4 rounded-t-xl flex justify-between items-center">
                     <h3 className="flex items-center gap-2 text-lg font-semibold text-slate-800">
-                        <User className="w-5 h-5 text-indigo-500" />
+                        <User className="w-5 h-5 text-[#4C8EAB]" />
                         Patient Information
                     </h3>
                 </div>
@@ -271,7 +271,7 @@ export function RxForm({ doctor, initialPatients }: { doctor: any, initialPatien
                             }}
                             onFocus={() => setShowPatientSuggestions(true)}
                             onBlur={() => setTimeout(() => setShowPatientSuggestions(false), 200)}
-                            className="w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm px-4 py-2 border text-slate-900 placeholder-slate-400"
+                            className="w-full rounded-lg border-slate-300 shadow-sm focus:border-[#4C8EAB] focus:ring-[#4C8EAB] sm:text-sm px-4 py-2 border text-[#1A202C] placeholder-slate-400"
                             placeholder="e.g. John Doe"
                         />
                         {showPatientSuggestions && patientSuggestions.length > 0 && (
@@ -294,7 +294,7 @@ export function RxForm({ doctor, initialPatients }: { doctor: any, initialPatien
                             type="text"
                             value={patient.contact || ''}
                             onChange={(e) => setPatient({ ...patient, contact: e.target.value })}
-                            className="w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm px-4 py-2 border text-slate-900 placeholder-slate-400"
+                            className="w-full rounded-lg border-slate-300 shadow-sm focus:border-[#4C8EAB] focus:ring-[#4C8EAB] sm:text-sm px-4 py-2 border text-[#1A202C] placeholder-slate-400"
                             placeholder="e.g. +1 234 567 8900"
                         />
                     </div>
@@ -304,7 +304,7 @@ export function RxForm({ doctor, initialPatients }: { doctor: any, initialPatien
                             type="text"
                             value={patient.custom_patient_id || ''}
                             onChange={(e) => setPatient({ ...patient, custom_patient_id: e.target.value })}
-                            className="w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm px-4 py-2 border text-slate-900 placeholder-slate-400"
+                            className="w-full rounded-lg border-slate-300 shadow-sm focus:border-[#4C8EAB] focus:ring-[#4C8EAB] sm:text-sm px-4 py-2 border text-[#1A202C] placeholder-slate-400"
                             placeholder="e.g. PAT001"
                         />
                     </div>
@@ -315,7 +315,7 @@ export function RxForm({ doctor, initialPatients }: { doctor: any, initialPatien
                                 type="number"
                                 value={patient.age || ''}
                                 onChange={(e) => setPatient({ ...patient, age: parseInt(e.target.value) || null })}
-                                className="w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm px-4 py-2 border text-slate-900 placeholder-slate-400"
+                                className="w-full rounded-lg border-slate-300 shadow-sm focus:border-[#4C8EAB] focus:ring-[#4C8EAB] sm:text-sm px-4 py-2 border text-[#1A202C] placeholder-slate-400"
                                 placeholder="Years"
                             />
                         </div>
@@ -325,7 +325,7 @@ export function RxForm({ doctor, initialPatients }: { doctor: any, initialPatien
                                 <select
                                     value={patient.gender || 'Male'}
                                     onChange={(e) => setPatient({ ...patient, gender: e.target.value })}
-                                    className="w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm px-4 py-2 border text-slate-900 bg-white appearance-none pr-10"
+                                    className="w-full rounded-lg border-slate-300 shadow-sm focus:border-[#4C8EAB] focus:ring-[#4C8EAB] sm:text-sm px-4 py-2 border text-[#1A202C] bg-white appearance-none pr-10"
                                 >
                                     <option>Male</option>
                                     <option>Female</option>
@@ -344,7 +344,7 @@ export function RxForm({ doctor, initialPatients }: { doctor: any, initialPatien
             <section className="bg-white rounded-xl shadow-sm border border-slate-200">
                 <div className="border-b border-slate-100 bg-slate-50/50 px-6 py-4 rounded-t-xl flex justify-between items-center">
                     <h3 className="flex items-center gap-2 text-lg font-semibold text-slate-800">
-                        <Activity className="w-5 h-5 text-indigo-500" />
+                        <Activity className="w-5 h-5 text-[#4C8EAB]" />
                         Prescription Details
                     </h3>
                     <button
@@ -368,7 +368,7 @@ export function RxForm({ doctor, initialPatients }: { doctor: any, initialPatien
                                             value={med.name}
                                             onChange={(e) => updateMedicineField(index, 'name', e.target.value)}
                                             onBlur={() => setTimeout(() => setActiveMedIndex(null), 200)}
-                                            className="w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm px-4 py-2 border text-slate-900 placeholder-slate-400"
+                                            className="w-full rounded-lg border-slate-300 shadow-sm focus:border-[#4C8EAB] focus:ring-[#4C8EAB] sm:text-sm px-4 py-2 border text-[#1A202C] placeholder-slate-400"
                                             placeholder="e.g. Paracetamol 500mg"
                                         />
                                         {activeMedIndex === index && medSuggestions.length > 0 && (
@@ -392,7 +392,7 @@ export function RxForm({ doctor, initialPatients }: { doctor: any, initialPatien
                                                     type="text"
                                                     value={med.frequency}
                                                     onChange={(e) => updateMedicineField(index, 'frequency', e.target.value)}
-                                                    className="w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm px-4 py-2 border text-slate-900 placeholder-slate-400 pr-8"
+                                                    className="w-full rounded-lg border-slate-300 shadow-sm focus:border-[#4C8EAB] focus:ring-[#4C8EAB] sm:text-sm px-4 py-2 border text-[#1A202C] placeholder-slate-400 pr-8"
                                                     placeholder="Custom Frequency"
                                                     autoFocus
                                                 />
@@ -408,7 +408,7 @@ export function RxForm({ doctor, initialPatients }: { doctor: any, initialPatien
                                                 <select
                                                     value={med.frequency}
                                                     onChange={(e) => handleFrequencySelect(index, e.target.value)}
-                                                    className="w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm px-4 py-2 border text-slate-900 bg-white appearance-none pr-8"
+                                                    className="w-full rounded-lg border-slate-300 shadow-sm focus:border-[#4C8EAB] focus:ring-[#4C8EAB] sm:text-sm px-4 py-2 border text-[#1A202C] bg-white appearance-none pr-8"
                                                 >
                                                     <option value="">Frequency...</option>
                                                     <option value="Once daily">Once daily</option>
@@ -430,7 +430,7 @@ export function RxForm({ doctor, initialPatients }: { doctor: any, initialPatien
                                                     type="number"
                                                     value={med.duration}
                                                     onChange={(e) => updateMedicineField(index, 'duration', e.target.value)}
-                                                    className="w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm pl-4 pr-16 py-2 border text-slate-900 placeholder-slate-400"
+                                                    className="w-full rounded-lg border-slate-300 shadow-sm focus:border-[#4C8EAB] focus:ring-[#4C8EAB] sm:text-sm pl-4 pr-16 py-2 border text-[#1A202C] placeholder-slate-400"
                                                     placeholder="e.g. 10"
                                                     autoFocus
                                                 />
@@ -449,7 +449,7 @@ export function RxForm({ doctor, initialPatients }: { doctor: any, initialPatien
                                                 <select
                                                     value={med.duration}
                                                     onChange={(e) => handleDurationSelect(index, e.target.value)}
-                                                    className="w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm px-4 py-2 border text-slate-900 bg-white appearance-none pr-8"
+                                                    className="w-full rounded-lg border-slate-300 shadow-sm focus:border-[#4C8EAB] focus:ring-[#4C8EAB] sm:text-sm px-4 py-2 border text-[#1A202C] bg-white appearance-none pr-8"
                                                 >
                                                     <option value="">Duration...</option>
                                                     <option value="2 days">2 days</option>
@@ -483,7 +483,7 @@ export function RxForm({ doctor, initialPatients }: { doctor: any, initialPatien
                             rows={2}
                             value={diagnosis}
                             onChange={(e) => setDiagnosis(e.target.value)}
-                            className="w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm px-4 py-3 border text-slate-900 placeholder-slate-400"
+                            className="w-full rounded-lg border-slate-300 shadow-sm focus:border-[#4C8EAB] focus:ring-[#4C8EAB] sm:text-sm px-4 py-3 border text-[#1A202C] placeholder-slate-400"
                             placeholder="e.g. Viral Fever, Hypertension..."
                         />
                     </div>
@@ -494,7 +494,7 @@ export function RxForm({ doctor, initialPatients }: { doctor: any, initialPatien
                             rows={2}
                             value={additionalNotes}
                             onChange={(e) => setAdditionalNotes(e.target.value)}
-                            className="w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm px-4 py-3 border text-slate-900 placeholder-slate-400"
+                            className="w-full rounded-lg border-slate-300 shadow-sm focus:border-[#4C8EAB] focus:ring-[#4C8EAB] sm:text-sm px-4 py-3 border text-[#1A202C] placeholder-slate-400"
                             placeholder="Any specific instructions for the patient..."
                         />
                     </div>
@@ -505,7 +505,7 @@ export function RxForm({ doctor, initialPatients }: { doctor: any, initialPatien
                             rows={2}
                             value={suggestedLabTests}
                             onChange={(e) => setSuggestedLabTests(e.target.value)}
-                            className="w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm px-4 py-3 border text-slate-900 placeholder-slate-400"
+                            className="w-full rounded-lg border-slate-300 shadow-sm focus:border-[#4C8EAB] focus:ring-[#4C8EAB] sm:text-sm px-4 py-3 border text-[#1A202C] placeholder-slate-400"
                             placeholder="e.g. CBC, Lipid Profile..."
                         />
                     </div>
@@ -517,7 +517,7 @@ export function RxForm({ doctor, initialPatients }: { doctor: any, initialPatien
                 <button
                     onClick={handleSave}
                     disabled={isSubmitting}
-                    className="inline-flex items-center gap-2 justify-center py-3 px-8 border border-transparent shadow-sm text-sm font-semibold rounded-xl text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 transition-all hover:shadow-md"
+                    className="inline-flex items-center gap-2 justify-center py-3 px-8 border border-transparent shadow-sm text-sm font-semibold rounded-xl text-white bg-[#4C8EAB] hover:bg-[#3A738F] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#4C8EAB] disabled:opacity-50 transition-all hover:shadow-md"
                 >
                     {isSubmitting ? 'Saving...' : 'Save Prescription'}
                 </button>

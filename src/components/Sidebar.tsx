@@ -1,10 +1,12 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { signout } from '@/app/auth/actions'
-import { Stethoscope, LayoutDashboard, Users, FilePlus, UserCircle, LogOut, Menu, X } from 'lucide-react'
+import { LayoutDashboard, Users, FilePlus, UserCircle, LogOut, Menu, X } from 'lucide-react'
 import { useState, useEffect } from 'react'
+import logoSvg from '@/assets/logo.svg'
 
 export function Sidebar() {
     const pathname = usePathname()
@@ -27,10 +29,10 @@ export function Sidebar() {
             {/* Mobile Top Nav */}
             <div className="md:hidden flex items-center justify-between bg-white border-b border-slate-200 px-4 h-16 fixed top-0 w-full z-40">
                 <div className="flex items-center gap-2">
-                    <Stethoscope className="w-6 h-6 text-slate-800" />
-                    <h1 className="text-xl font-bold tracking-tight text-slate-800">Rx Workspace</h1>
+                    <Image src={logoSvg} alt="Logo" width={28} height={28} />
+                    <h1 className="text-xl font-bold tracking-tight text-[#1A202C]">Rx Workspace</h1>
                 </div>
-                <button onClick={() => setIsOpen(!isOpen)} className="text-slate-600 hover:text-slate-900 p-2 rounded-lg hover:bg-slate-100">
+                <button onClick={() => setIsOpen(!isOpen)} className="text-slate-600 hover:text-[#1A202C] p-2 rounded-lg hover:bg-slate-100">
                     {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
                 </button>
             </div>
@@ -46,15 +48,15 @@ export function Sidebar() {
             {/* Sidebar */}
             <div className={`fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-[1px_0_5px_rgba(0,0,0,0.05)] border-r border-slate-200 flex flex-col transition-transform duration-300 ease-in-out md:translate-x-0 md:static md:h-full ${isOpen ? 'translate-x-0' : '-translate-x-full'}`}>
                 <div className="hidden md:flex h-16 items-center justify-center gap-2 border-b border-slate-200 px-4">
-                    <Stethoscope className="w-6 h-6 text-slate-800" />
-                    <h1 className="text-xl font-bold tracking-tight text-slate-800">Rx Workspace</h1>
+                    <Image src={logoSvg} alt="Logo" width={28} height={28} />
+                    <h1 className="text-xl font-bold tracking-tight text-[#1A202C]">Rx Workspace</h1>
                 </div>
 
                 {/* Mobile Sidebar Header */}
                 <div className="flex md:hidden h-16 items-center justify-between gap-2 border-b border-slate-200 px-4">
                     <div className="flex items-center gap-2">
-                        <Stethoscope className="w-6 h-6 text-slate-800" />
-                        <h1 className="text-xl font-bold tracking-tight text-slate-800">Rx Workspace</h1>
+                        <Image src={logoSvg} alt="Logo" width={28} height={28} />
+                        <h1 className="text-xl font-bold tracking-tight text-[#1A202C]">Rx Workspace</h1>
                     </div>
                 </div>
 
@@ -67,11 +69,11 @@ export function Sidebar() {
                                 key={link.name}
                                 href={link.href}
                                 className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-colors ${isActive
-                                        ? 'bg-slate-100 font-semibold text-slate-900'
-                                        : 'font-medium text-slate-600 hover:bg-slate-50 hover:text-slate-900'
+                                        ? 'bg-[#EBF4F8] font-semibold text-[#1A202C]'
+                                        : 'font-medium text-slate-600 hover:bg-slate-50 hover:text-[#1A202C]'
                                     }`}
                             >
-                                <Icon className={`w-5 h-5 ${isActive ? 'text-slate-900' : 'text-slate-500'}`} />
+                                <Icon className={`w-5 h-5 ${isActive ? 'text-[#1A202C]' : 'text-slate-500'}`} />
                                 {link.name}
                             </Link>
                         )
@@ -81,7 +83,7 @@ export function Sidebar() {
                     <form action={signout}>
                         <button
                             type="submit"
-                            className="flex w-full items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 hover:text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-200 focus:ring-offset-1"
+                            className="flex w-full items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 hover:text-[#1A202C] focus:outline-none focus:ring-2 focus:ring-slate-200 focus:ring-offset-1"
                         >
                             <LogOut className="w-4 h-4" />
                             Sign Out

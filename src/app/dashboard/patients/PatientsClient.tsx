@@ -83,24 +83,24 @@ export function PatientsClient({ doctor, patients }: { doctor: any, patients: Pa
                                     >
                                         <td className="px-6 py-4 whitespace-nowrap">
                                             <div className="flex items-center">
-                                                <div className="h-10 w-10 flex-shrink-0 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600">
+                                                <div className="h-10 w-10 flex-shrink-0 rounded-full bg-[#E0EFF5] flex items-center justify-center text-[#4C8EAB]">
                                                     <User className="h-5 w-5" />
                                                 </div>
                                                 <div className="ml-4">
-                                                    <div className="text-sm font-semibold text-slate-900">{patient.name}</div>
+                                                    <div className="text-sm font-semibold text-[#1A202C]">{patient.name}</div>
                                                     <div className="text-sm text-slate-500">{patient.age ? `${patient.age} yrs` : 'N/A'} • {patient.gender}</div>
                                                 </div>
                                             </div>
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap">
-                                            <div className="text-sm text-slate-900">{patient.custom_patient_id || 'N/A'}</div>
+                                            <div className="text-sm text-[#1A202C]">{patient.custom_patient_id || 'N/A'}</div>
                                             <div className="text-sm text-slate-500 flex items-center gap-1 mt-0.5">
                                                 <Phone className="w-3 h-3" />
                                                 {patient.contact || 'No contact'}
                                             </div>
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap">
-                                            <div className="text-sm text-slate-900 flex items-center gap-1.5">
+                                            <div className="text-sm text-[#1A202C] flex items-center gap-1.5">
                                                 <Calendar className="w-4 h-4 text-slate-400" />
                                                 {getLastVisitDate(patient)}
                                             </div>
@@ -121,7 +121,7 @@ export function PatientsClient({ doctor, patients }: { doctor: any, patients: Pa
                         {/* Modal Header */}
                         <div className="flex justify-between items-center px-6 py-4 border-b border-slate-100 bg-slate-50/50">
                             <h3 className="text-lg font-semibold text-slate-800 flex items-center gap-2">
-                                <User className="w-5 h-5 text-indigo-500" />
+                                <User className="w-5 h-5 text-[#4C8EAB]" />
                                 Patient Overview
                             </h3>
                             <button
@@ -139,21 +139,21 @@ export function PatientsClient({ doctor, patients }: { doctor: any, patients: Pa
                                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                                     <div>
                                         <p className="text-xs font-medium text-slate-500 uppercase tracking-wider mb-1">Name</p>
-                                        <p className="font-medium text-slate-900">{selectedPatient.name}</p>
+                                        <p className="font-medium text-[#1A202C]">{selectedPatient.name}</p>
                                     </div>
                                     <div>
                                         <p className="text-xs font-medium text-slate-500 uppercase tracking-wider mb-1">Patient ID</p>
-                                        <p className="font-medium text-slate-900">{selectedPatient.custom_patient_id || 'N/A'}</p>
+                                        <p className="font-medium text-[#1A202C]">{selectedPatient.custom_patient_id || 'N/A'}</p>
                                     </div>
                                     <div>
                                         <p className="text-xs font-medium text-slate-500 uppercase tracking-wider mb-1">Age / Gender</p>
-                                        <p className="font-medium text-slate-900">
+                                        <p className="font-medium text-[#1A202C]">
                                             {selectedPatient.age ? `${selectedPatient.age} yrs` : 'N/A'}, {selectedPatient.gender}
                                         </p>
                                     </div>
                                     <div>
                                         <p className="text-xs font-medium text-slate-500 uppercase tracking-wider mb-1">Contact</p>
-                                        <p className="font-medium text-slate-900">{selectedPatient.contact || 'N/A'}</p>
+                                        <p className="font-medium text-[#1A202C]">{selectedPatient.contact || 'N/A'}</p>
                                     </div>
                                 </div>
                             </div>
@@ -161,7 +161,7 @@ export function PatientsClient({ doctor, patients }: { doctor: any, patients: Pa
                             {/* Past Prescriptions */}
                             <div>
                                 <h4 className="text-sm font-semibold text-slate-800 mb-3 flex items-center gap-2">
-                                    <Calendar className="w-4 h-4 text-indigo-500" />
+                                    <Calendar className="w-4 h-4 text-[#4C8EAB]" />
                                     Visit History & Prescriptions
                                 </h4>
 
@@ -183,7 +183,7 @@ export function PatientsClient({ doctor, patients }: { doctor: any, patients: Pa
                                                 return (
                                                     <div key={rx.id} className="flex justify-between items-center p-4 bg-white border border-slate-200 rounded-xl shadow-sm hover:border-indigo-300 transition-colors">
                                                         <div>
-                                                            <p className="text-sm font-medium text-slate-900">{formatDate(rx.created_at)}</p>
+                                                            <p className="text-sm font-medium text-[#1A202C]">{formatDate(rx.created_at)}</p>
                                                             <p className="text-sm text-slate-500 mt-1 line-clamp-1">
                                                                 <span className="font-medium text-slate-700">Diagnosis: </span>
                                                                 {rx.diagnosis || 'No diagnosis recorded'}
@@ -193,7 +193,7 @@ export function PatientsClient({ doctor, patients }: { doctor: any, patients: Pa
                                                             <PDFDownloadLink
                                                                 document={<PrescriptionPDF data={pdfData} />}
                                                                 fileName={fileName}
-                                                                className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-indigo-700 bg-indigo-50 hover:bg-indigo-100 rounded-lg transition-colors border border-indigo-100 flex-shrink-0"
+                                                                className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-indigo-700 bg-[#F2F7F9] hover:bg-[#E0EFF5] rounded-lg transition-colors border border-indigo-100 flex-shrink-0"
                                                             >
                                                                 <FileDown className="w-4 h-4" />
                                                                 Download PDF
@@ -215,7 +215,7 @@ export function PatientsClient({ doctor, patients }: { doctor: any, patients: Pa
                         <div className="border-t border-slate-100 px-6 py-4 bg-slate-50/50 flex justify-end">
                             <button
                                 onClick={() => setSelectedPatient(null)}
-                                className="px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-lg shadow-sm hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors"
+                                className="px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-lg shadow-sm hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#4C8EAB] transition-colors"
                             >
                                 Close
                             </button>

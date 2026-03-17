@@ -4,7 +4,7 @@ import { Toaster } from 'sonner'
 
 export default function DashboardLayout({ children }: { children: ReactNode }) {
     return (
-        <div className="flex h-screen bg-slate-50 overflow-hidden font-sans text-slate-900">
+        <div className="flex h-screen bg-slate-50 overflow-hidden font-sans text-[#1A202C]">
             <Toaster position="top-right" richColors />
 
             {/* Sidebar Component */}

@@ -30,14 +30,14 @@ export default async function NewRxPage() {
                     <AlertCircle className="w-12 h-12" />
                 </div>
                 <div>
-                    <h2 className="text-2xl font-bold text-slate-900 tracking-tight">Complete Your Profile</h2>
+                    <h2 className="text-2xl font-bold text-[#1A202C] tracking-tight">Complete Your Profile</h2>
                     <p className="mt-2 text-slate-500">
                         You must complete your doctor profile (including your name and clinic details) before you can start generating prescriptions.
                     </p>
                 </div>
                 <Link
                     href="/dashboard/profile"
-                    className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-6 rounded-xl shadow-sm transition-all hover:shadow-md"
+                    className="inline-flex items-center gap-2 bg-[#4C8EAB] hover:bg-[#3A738F] text-white font-semibold py-3 px-6 rounded-xl shadow-sm transition-all hover:shadow-md"
                 >
                     <UserCircle className="w-5 h-5" />
                     Go to Profile Settings
@@ -55,7 +55,7 @@ export default async function NewRxPage() {
     return (
         <div className="space-y-6 max-w-4xl mx-auto pb-10">
             <div>
-                <h2 className="text-2xl font-bold text-slate-900 tracking-tight">New Prescription</h2>
+                <h2 className="text-2xl font-bold text-[#1A202C] tracking-tight">New Prescription</h2>
                 <p className="mt-1 text-sm text-slate-500">
                     Fill in the details below to generate and save a new prescription.
                 </p>

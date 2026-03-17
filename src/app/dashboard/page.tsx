@@ -16,12 +16,12 @@ async function DashboardStats({ userId }: { userId: string }) {
     return (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 flex items-center gap-4">
-                <div className="p-4 bg-indigo-50 text-indigo-600 rounded-xl flex-shrink-0">
+                <div className="p-4 bg-[#F2F7F9] text-[#4C8EAB] rounded-xl flex-shrink-0">
                     <Users className="w-8 h-8" />
                 </div>
                 <div>
                     <p className="text-sm font-medium text-slate-500">Total Patients</p>
-                    <p className="text-3xl font-bold text-slate-900">{patientRes.count || 0}</p>
+                    <p className="text-3xl font-bold text-[#1A202C]">{patientRes.count || 0}</p>
                 </div>
             </div>
 
@@ -31,17 +31,17 @@ async function DashboardStats({ userId }: { userId: string }) {
                 </div>
                 <div>
                     <p className="text-sm font-medium text-slate-500">Prescriptions</p>
-                    <p className="text-3xl font-bold text-slate-900">{rxRes.count || 0}</p>
+                    <p className="text-3xl font-bold text-[#1A202C]">{rxRes.count || 0}</p>
                 </div>
             </div>
 
             <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 flex items-center gap-4">
-                <div className="p-4 bg-blue-50 text-blue-600 rounded-xl flex-shrink-0">
+                <div className="p-4 bg-yellow-100 text-[#EDAC3F] rounded-xl flex-shrink-0">
                     <Pill className="w-8 h-8" />
                 </div>
                 <div>
-                    <p className="text-sm font-medium text-slate-500">Global Medicines</p>
-                    <p className="text-3xl font-bold text-slate-900">{medRes.count || 0}</p>
+                    <p className="text-sm font-medium text-slate-500">Medicine Directory</p>
+                    <p className="text-3xl font-bold text-[#1A202C]">{medRes.count || 0}</p>
                 </div>
             </div>
         </div>
@@ -109,7 +109,7 @@ async function RecentPatients({ userId }: { userId: string }) {
                     <tbody className="bg-white divide-y divide-slate-200">
                         {patients.map(p => (
                             <tr key={p.id} className="hover:bg-slate-50">
-                                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-900">{p.name}</td>
+                                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-[#1A202C]">{p.name}</td>
                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500">{p.custom_patient_id || 'N/A'}</td>
                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500">
                                     {new Date(p.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
@@ -161,7 +161,7 @@ export default async function DashboardPage() {
             )}
 
             <div>
-                <h2 className="text-2xl font-bold tracking-tight text-slate-900">Dashboard</h2>
+                <h2 className="text-2xl font-bold tracking-tight text-[#1A202C]">Dashboard</h2>
                 <p className="mt-1 text-sm text-slate-500">Welcome to your Rx Workspace.</p>
             </div>
 
@@ -169,7 +169,7 @@ export default async function DashboardPage() {
                 <h3 className="text-sm font-semibold text-slate-800 uppercase tracking-wider mb-4">Quick Actions</h3>
                 <Link
                     href="/dashboard/new-rx"
-                    className="inline-flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-4 px-8 rounded-xl shadow-sm transition-all hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 w-full md:w-auto"
+                    className="inline-flex items-center justify-center gap-2 bg-[#4C8EAB] hover:bg-[#3A738F] text-white font-semibold py-4 px-8 rounded-xl shadow-sm transition-all hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 w-full md:w-auto"
                 >
                     <Plus className="w-5 h-5" />
                     Create New Prescription

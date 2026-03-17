@@ -14,7 +14,7 @@ const styles = StyleSheet.create({
     clinicName: {
         fontSize: 24,
         fontFamily: 'Helvetica-Bold',
-        color: '#0ea5e9',
+        color: '#4C8EAB',
         marginBottom: 4,
         textTransform: 'uppercase',
     },
@@ -31,7 +31,7 @@ const styles = StyleSheet.create({
     },
     divider: {
         borderBottomWidth: 1.5,
-        borderBottomColor: '#0ea5e9',
+        borderBottomColor: '#4C8EAB',
         marginVertical: 15,
     },
     sectionTitle: {
@@ -89,7 +89,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
     },
     tableHeaderRow: {
-        backgroundColor: '#0ea5e9',
+        backgroundColor: '#4C8EAB',
     },
     tableColHeader: {
         width: '33.33%',
