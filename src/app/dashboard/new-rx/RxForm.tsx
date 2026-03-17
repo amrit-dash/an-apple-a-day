@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Plus, Trash2, User, Activity, FileDown, RotateCcw } from 'lucide-react'
+import { Plus, Trash2, User, Activity, FileDown, RotateCcw, Stethoscope, ChevronDown } from 'lucide-react'
 import { toast } from 'sonner'
 import { savePrescription } from '@/app/actions/rx'
 import { createClient } from '@/utils/supabase/client'
@@ -21,6 +21,8 @@ type Medicine = {
     name: string
     frequency: string
     duration: string
+    isCustomFreq: boolean
+    isCustomDur: boolean
 }
 
 export function RxForm({ doctor, initialPatients }: { doctor: any, initialPatients: Patient[] }) {
@@ -36,7 +38,7 @@ export function RxForm({ doctor, initialPatients }: { doctor: any, initialPatien
     const [showPatientSuggestions, setShowPatientSuggestions] = useState(false)
 
     // Medicine State
-    const [medicines, setMedicines] = useState<Medicine[]>([{ name: '', frequency: '', duration: '' }])
+    const [medicines, setMedicines] = useState<Medicine[]>([{ name: '', frequency: '', duration: '', isCustomFreq: false, isCustomDur: false }])
     const [medSuggestions, setMedSuggestions] = useState<string[]>([])
     const [activeMedIndex, setActiveMedIndex] = useState<number | null>(null)
 
@@ -59,7 +61,7 @@ export function RxForm({ doctor, initialPatients }: { doctor: any, initialPatien
     }
 
     const addMedicineRow = () => {
-        setMedicines([...medicines, { name: '', frequency: '', duration: '' }])
+        setMedicines([...medicines, { name: '', frequency: '', duration: '', isCustomFreq: false, isCustomDur: false }])
     }
 
     const removeMedicineRow = (index: number) => {
@@ -68,20 +70,46 @@ export function RxForm({ doctor, initialPatients }: { doctor: any, initialPatien
         }
     }
 
-    const updateMedicine = (index: number, field: keyof Medicine, value: string) => {
+    const updateMedicine = (index: number, field: keyof Medicine, value: string | boolean) => {
         const updated = [...medicines]
-        updated[index] = { ...updated[index], [field]: value }
+
+        if (field === 'frequency') {
+            if (value === 'Custom') {
+                updated[index].isCustomFreq = true
+                updated[index].frequency = ''
+            } else {
+                updated[index].isCustomFreq = false
+                updated[index].frequency = value as string
+            }
+        } else if (field === 'duration') {
+            if (value === 'Custom') {
+                updated[index].isCustomDur = true
+                updated[index].duration = ''
+            } else {
+                updated[index].isCustomDur = false
+                updated[index].duration = value as string
+            }
+        } else {
+            updated[index] = { ...updated[index], [field]: value }
+        }
+
         setMedicines(updated)
 
         if (field === 'name') {
-            if (value.length > 2) {
-                searchGlobalMedicines(value)
+            if ((value as string).length > 2) {
+                searchGlobalMedicines(value as string)
                 setActiveMedIndex(index)
             } else {
                 setMedSuggestions([])
                 setActiveMedIndex(null)
             }
         }
+    }
+
+    const handleCustomDurationChange = (index: number, value: string) => {
+        const updated = [...medicines]
+        updated[index].duration = value
+        setMedicines(updated)
     }
 
     const searchGlobalMedicines = async (query: string) => {
@@ -107,10 +135,23 @@ export function RxForm({ doctor, initialPatients }: { doctor: any, initialPatien
         }
 
         setIsSubmitting(true)
+
+        const processedMedicines = medicines.map(m => {
+            let finalDuration = m.duration
+            if (m.isCustomDur && m.duration.trim() !== '') {
+                finalDuration = `${m.duration.trim()} days`
+            }
+            return {
+                name: m.name,
+                frequency: m.frequency,
+                duration: finalDuration
+            }
+        })
+
         const result = await savePrescription({
             doctorId: doctor.id,
             patient,
-            medicines,
+            medicines: processedMedicines,
             diagnosis,
             additionalNotes,
             suggestedLabTests
@@ -129,7 +170,7 @@ export function RxForm({ doctor, initialPatients }: { doctor: any, initialPatien
                     additional_notes: additionalNotes,
                     suggested_lab_tests: suggestedLabTests,
                 },
-                medicines: medicines.filter(m => m.name.trim() !== '')
+                medicines: processedMedicines.filter(m => m.name.trim() !== '')
             }
             setSuccessData(rxDataForPdf)
         }
@@ -139,7 +180,7 @@ export function RxForm({ doctor, initialPatients }: { doctor: any, initialPatien
     const resetForm = () => {
         setSuccessData(null)
         setPatient({ name: '', custom_patient_id: '', age: null, gender: 'Male', contact: '' })
-        setMedicines([{ name: '', frequency: '', duration: '' }])
+        setMedicines([{ name: '', frequency: '', duration: '', isCustomFreq: false, isCustomDur: false }])
         setDiagnosis('')
         setAdditionalNotes('')
         setSuggestedLabTests('')
@@ -186,9 +227,21 @@ export function RxForm({ doctor, initialPatients }: { doctor: any, initialPatien
 
     return (
         <div className="space-y-8">
+            {/* Doctor Info Header */}
+            <div className="bg-slate-50 rounded-xl shadow-sm border border-slate-200 p-4 flex items-center gap-4">
+                <div className="p-3 bg-white border border-slate-200 text-indigo-500 rounded-full flex-shrink-0">
+                    <Stethoscope className="w-6 h-6" />
+                </div>
+                <div>
+                    <h3 className="text-sm font-medium text-slate-500 uppercase tracking-wider mb-0.5">Doctor Details</h3>
+                    <p className="text-slate-900 font-semibold">{doctor.full_name}{doctor.degree ? `, ${doctor.degree}` : ''}</p>
+                    <p className="text-slate-600 text-sm">{doctor.clinic_name}</p>
+                </div>
+            </div>
+
             {/* Patient Section */}
             <section className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-visible">
-                <div className="border-b border-slate-100 bg-slate-50/50 px-6 py-4 rounded-t-xl">
+                <div className="border-b border-slate-100 bg-slate-50/50 px-6 py-4 rounded-t-xl flex justify-between items-center">
                     <h3 className="flex items-center gap-2 text-lg font-semibold text-slate-800">
                         <User className="w-5 h-5 text-indigo-500" />
                         Patient Information
@@ -229,7 +282,7 @@ export function RxForm({ doctor, initialPatients }: { doctor: any, initialPatien
                             type="text"
                             value={patient.contact || ''}
                             onChange={(e) => setPatient({ ...patient, contact: e.target.value })}
-                            className="w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm px-4 py-2 border text-slate-900"
+                            className="w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm px-4 py-2 border text-slate-900 placeholder-slate-400"
                             placeholder="e.g. +1 234 567 8900"
                         />
                     </div>
@@ -239,7 +292,7 @@ export function RxForm({ doctor, initialPatients }: { doctor: any, initialPatien
                             type="text"
                             value={patient.custom_patient_id || ''}
                             onChange={(e) => setPatient({ ...patient, custom_patient_id: e.target.value })}
-                            className="w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm px-4 py-2 border text-slate-900"
+                            className="w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm px-4 py-2 border text-slate-900 placeholder-slate-400"
                             placeholder="e.g. PAT001"
                         />
                     </div>
@@ -250,21 +303,26 @@ export function RxForm({ doctor, initialPatients }: { doctor: any, initialPatien
                                 type="number"
                                 value={patient.age || ''}
                                 onChange={(e) => setPatient({ ...patient, age: parseInt(e.target.value) || null })}
-                                className="w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm px-4 py-2 border text-slate-900"
+                                className="w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm px-4 py-2 border text-slate-900 placeholder-slate-400"
                                 placeholder="Years"
                             />
                         </div>
-                        <div>
+                        <div className="relative">
                             <label className="block text-sm font-medium text-slate-700 mb-1">Gender</label>
-                            <select
-                                value={patient.gender || 'Male'}
-                                onChange={(e) => setPatient({ ...patient, gender: e.target.value })}
-                                className="w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm px-4 py-2 border text-slate-900 bg-white"
-                            >
-                                <option>Male</option>
-                                <option>Female</option>
-                                <option>Other</option>
-                            </select>
+                            <div className="relative">
+                                <select
+                                    value={patient.gender || 'Male'}
+                                    onChange={(e) => setPatient({ ...patient, gender: e.target.value })}
+                                    className="w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm px-4 py-2 border text-slate-900 bg-white appearance-none pr-10"
+                                >
+                                    <option>Male</option>
+                                    <option>Female</option>
+                                    <option>Other</option>
+                                </select>
+                                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-slate-500">
+                                    <ChevronDown className="w-4 h-4" />
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -272,29 +330,26 @@ export function RxForm({ doctor, initialPatients }: { doctor: any, initialPatien
 
             {/* Prescription Details Section */}
             <section className="bg-white rounded-xl shadow-sm border border-slate-200">
-                <div className="border-b border-slate-100 bg-slate-50/50 px-6 py-4 rounded-t-xl">
+                <div className="border-b border-slate-100 bg-slate-50/50 px-6 py-4 rounded-t-xl flex justify-between items-center">
                     <h3 className="flex items-center gap-2 text-lg font-semibold text-slate-800">
                         <Activity className="w-5 h-5 text-indigo-500" />
                         Prescription Details
                     </h3>
+                    <button
+                        onClick={addMedicineRow}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-green-700 bg-green-50 border border-green-200 rounded-lg hover:bg-green-100 transition-colors shadow-sm"
+                    >
+                        <Plus className="w-4 h-4" />
+                        Add Medicine
+                    </button>
                 </div>
                 <div className="p-6 space-y-6">
 
                     {/* Medicines */}
                     <div>
-                        <div className="flex justify-between items-center mb-3">
-                            <label className="block text-sm font-medium text-slate-700">Medicines</label>
-                            <button
-                                onClick={addMedicineRow}
-                                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-green-700 bg-green-50 rounded-lg hover:bg-green-100 transition-colors"
-                            >
-                                <Plus className="w-4 h-4" />
-                                Add Medicine
-                            </button>
-                        </div>
                         <div className="space-y-3">
                             {medicines.map((med, index) => (
-                                <div key={index} className="flex flex-col md:flex-row gap-3 items-start relative bg-slate-50/50 p-3 rounded-lg border border-slate-100">
+                                <div key={index} className="flex flex-col md:flex-row gap-3 items-start relative bg-slate-50/50 p-3 rounded-xl border border-slate-200">
                                     <div className="flex-1 w-full relative">
                                         <input
                                             type="text"
@@ -318,36 +373,76 @@ export function RxForm({ doctor, initialPatients }: { doctor: any, initialPatien
                                             </ul>
                                         )}
                                     </div>
-                                    <div className="w-full md:w-48">
-                                        <select
-                                            value={med.frequency}
-                                            onChange={(e) => updateMedicine(index, 'frequency', e.target.value)}
-                                            className="w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm px-4 py-2 border text-slate-900 bg-white"
-                                        >
-                                            <option value="">Frequency...</option>
-                                            <option value="Once daily">Once daily</option>
-                                            <option value="Twice daily">Twice daily</option>
-                                            <option value="Thrice daily">Thrice daily</option>
-                                            <option value="As needed">As needed</option>
-                                        </select>
+                                    <div className="w-full md:w-48 relative">
+                                        {med.isCustomFreq ? (
+                                            <input
+                                                type="text"
+                                                value={med.frequency}
+                                                onChange={(e) => updateMedicine(index, 'frequency', e.target.value)}
+                                                className="w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm px-4 py-2 border text-slate-900 placeholder-slate-400"
+                                                placeholder="Custom Frequency"
+                                                autoFocus
+                                            />
+                                        ) : (
+                                            <div className="relative w-full">
+                                                <select
+                                                    value={med.frequency}
+                                                    onChange={(e) => updateMedicine(index, 'frequency', e.target.value)}
+                                                    className="w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm px-4 py-2 border text-slate-900 bg-white appearance-none pr-8"
+                                                >
+                                                    <option value="">Frequency...</option>
+                                                    <option value="Once daily">Once daily</option>
+                                                    <option value="Twice daily">Twice daily</option>
+                                                    <option value="Thrice daily">Thrice daily</option>
+                                                    <option value="As needed">As needed</option>
+                                                    <option value="Custom">Custom...</option>
+                                                </select>
+                                                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-slate-500">
+                                                    <ChevronDown className="w-4 h-4" />
+                                                </div>
+                                            </div>
+                                        )}
                                     </div>
-                                    <div className="w-full md:w-40">
-                                        <select
-                                            value={med.duration}
-                                            onChange={(e) => updateMedicine(index, 'duration', e.target.value)}
-                                            className="w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm px-4 py-2 border text-slate-900 bg-white"
-                                        >
-                                            <option value="">Duration...</option>
-                                            <option value="3 days">3 days</option>
-                                            <option value="5 days">5 days</option>
-                                            <option value="7 days">7 days</option>
-                                            <option value="15 days">15 days</option>
-                                            <option value="1 month">1 month</option>
-                                        </select>
+                                    <div className="w-full md:w-40 relative">
+                                        {med.isCustomDur ? (
+                                            <div className="relative w-full">
+                                                <input
+                                                    type="number"
+                                                    value={med.duration}
+                                                    onChange={(e) => handleCustomDurationChange(index, e.target.value)}
+                                                    className="w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm pl-4 pr-12 py-2 border text-slate-900 placeholder-slate-400"
+                                                    placeholder="e.g. 10"
+                                                    autoFocus
+                                                />
+                                                <span className="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-500 text-sm pointer-events-none">
+                                                    days
+                                                </span>
+                                            </div>
+                                        ) : (
+                                            <div className="relative w-full">
+                                                <select
+                                                    value={med.duration}
+                                                    onChange={(e) => updateMedicine(index, 'duration', e.target.value)}
+                                                    className="w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm px-4 py-2 border text-slate-900 bg-white appearance-none pr-8"
+                                                >
+                                                    <option value="">Duration...</option>
+                                                    <option value="2 days">2 days</option>
+                                                    <option value="3 days">3 days</option>
+                                                    <option value="5 days">5 days</option>
+                                                    <option value="7 days">7 days</option>
+                                                    <option value="15 days">15 days</option>
+                                                    <option value="1 month">1 month</option>
+                                                    <option value="Custom">Custom...</option>
+                                                </select>
+                                                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-slate-500">
+                                                    <ChevronDown className="w-4 h-4" />
+                                                </div>
+                                            </div>
+                                        )}
                                     </div>
                                     <button
                                         onClick={() => removeMedicineRow(index)}
-                                        className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                                        className="p-2 mt-0.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors flex-shrink-0"
                                     >
                                         <Trash2 className="w-5 h-5" />
                                     </button>
@@ -396,7 +491,7 @@ export function RxForm({ doctor, initialPatients }: { doctor: any, initialPatien
                 <button
                     onClick={handleSave}
                     disabled={isSubmitting}
-                    className="inline-flex items-center gap-2 justify-center py-2.5 px-6 border border-transparent shadow-sm text-sm font-semibold rounded-xl text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 transition-all"
+                    className="inline-flex items-center gap-2 justify-center py-3 px-8 border border-transparent shadow-sm text-sm font-semibold rounded-xl text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 transition-all hover:shadow-md"
                 >
                     {isSubmitting ? 'Saving...' : 'Save Prescription'}
                 </button>

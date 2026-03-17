@@ -172,7 +172,7 @@ export function PrescriptionPDF({ data }: { data: PDFData }) {
                     <Text style={styles.doctorName}>Dr. {doctor.full_name}{doctor.degree ? `, ${doctor.degree}` : ''}</Text>
                     <Text style={styles.doctorDetails}>{doctor.clinic_address}</Text>
                     <Text style={styles.doctorDetails}>
-                        Phone: {doctor.phone} | Reg. No.: {doctor.registration_number}
+                        Phone: {doctor.phone} | Registration Number: {doctor.registration_number}
                     </Text>
                 </View>
 
@@ -234,7 +234,7 @@ export function PrescriptionPDF({ data }: { data: PDFData }) {
                             </View>
                             {medicines.map((med, i) => (
                                 <View style={styles.tableRow} key={i}>
-                                    <View style={styles.tableCol}><Text style={styles.tableCell}>{med.medicine_name}</Text></View>
+                                    <View style={styles.tableCol}><Text style={styles.tableCell}>{med.medicine_name || med.name}</Text></View>
                                     <View style={styles.tableCol}><Text style={styles.tableCell}>{med.frequency}</Text></View>
                                     <View style={styles.tableCol}><Text style={styles.tableCell}>{med.duration}</Text></View>
                                 </View>
@@ -268,11 +268,8 @@ export function PrescriptionPDF({ data }: { data: PDFData }) {
                             <Image style={styles.signatureImage} src={doctor.signature_url} />
                         )}
                         {!doctor.signature_url && <View style={{ height: 40 }} />}
-                        <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 5 }}>
-                            <Text style={{ color: '#64748b', marginRight: 4 }}>Signature:</Text>
-                            <View style={{ flex: 1, borderBottomWidth: 1, borderBottomColor: '#1e293b' }} />
-                        </View>
-                        <Text style={styles.signatureName}>Dr. {doctor.full_name}, {doctor.degree}</Text>
+                        <View style={{ width: '100%', borderBottomWidth: 1, borderBottomColor: '#1e293b', marginBottom: 5 }} />
+                        <Text style={styles.signatureName}>Dr. {doctor.full_name}{doctor.degree ? `, ${doctor.degree}` : ''}</Text>
                     </View>
                 </View>
             </Page>
