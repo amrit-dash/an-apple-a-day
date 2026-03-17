@@ -9,53 +9,60 @@ export default async function RegisterPage({
     const { message } = await searchParams
 
     return (
-        <div className="flex min-h-screen items-center justify-center bg-gray-50 p-4">
-            <div className="w-full max-w-md space-y-8 rounded-xl bg-white p-8 shadow-md">
+        <div className="flex min-h-screen items-center justify-center bg-slate-50 p-4 font-sans">
+            <div className="w-full max-w-md space-y-8 rounded-2xl bg-white p-8 shadow-md border border-slate-200">
                 <div className="text-center">
-                    <h2 className="text-2xl font-bold tracking-tight text-gray-900">Create an account</h2>
+                    <div className="mx-auto h-12 w-12 rounded-full bg-blue-100 flex items-center justify-center mb-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 text-blue-600">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m3.75 9v6m3-3H9m1.5-12H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
+                        </svg>
+                    </div>
+                    <h2 className="text-2xl font-bold tracking-tight text-slate-900">Create an account</h2>
                 </div>
                 <form className="mt-8 space-y-6" action={signup}>
-                    <div className="space-y-4 rounded-md shadow-sm">
+                    <div className="space-y-4">
                         <div>
-                            <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email address</label>
+                            <label htmlFor="email" className="block text-sm font-medium text-slate-700">Email address</label>
                             <input
                                 id="email"
                                 name="email"
                                 type="email"
                                 autoComplete="email"
                                 required
-                                className="mt-1 block w-full rounded-md border-gray-300 px-3 py-2 border shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
+                                className="mt-1 block w-full rounded-lg border border-gray-300 px-4 py-3 text-slate-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 placeholder:text-slate-400 sm:text-sm"
+                                placeholder="doctor@hospital.com"
                             />
                         </div>
                         <div>
-                            <label htmlFor="password" className="block text-sm font-medium text-gray-700">Password</label>
+                            <label htmlFor="password" className="block text-sm font-medium text-slate-700">Password</label>
                             <input
                                 id="password"
                                 name="password"
                                 type="password"
                                 autoComplete="new-password"
                                 required
-                                className="mt-1 block w-full rounded-md border-gray-300 px-3 py-2 border shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
+                                className="mt-1 block w-full rounded-lg border border-gray-300 px-4 py-3 text-slate-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 placeholder:text-slate-400 sm:text-sm"
+                                placeholder="••••••••"
                             />
                         </div>
                     </div>
 
                     {message && (
-                        <div className="text-sm text-red-500 text-center">{message}</div>
+                        <div className="text-sm text-red-600 bg-red-50 border border-red-100 p-3 rounded-lg text-center">{message}</div>
                     )}
 
                     <div>
                         <button
                             type="submit"
-                            className="group relative flex w-full justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                            className="flex w-full justify-center rounded-lg bg-blue-600 px-4 py-3 text-sm font-semibold text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
                         >
                             Sign up
                         </button>
                     </div>
                 </form>
-                <p className="mt-2 text-center text-sm text-gray-600">
+                <p className="mt-6 text-center text-sm text-slate-600">
                     Already have an account?{' '}
-                    <Link href="/login" className="font-medium text-indigo-600 hover:text-indigo-500">
+                    <Link href="/login" className="font-semibold text-blue-600 hover:text-blue-500">
                         Sign in
                     </Link>
                 </p>
