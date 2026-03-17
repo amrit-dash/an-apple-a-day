@@ -269,7 +269,8 @@ export function PrescriptionPDF({ data }: { data: PDFData }) {
                         )}
                         {!doctor.signature_url && <View style={{ height: 40 }} />}
                         <View style={{ width: '100%', borderBottomWidth: 1, borderBottomColor: '#1e293b', marginBottom: 5 }} />
-                        <Text style={styles.signatureName}>Dr. {doctor.full_name}{doctor.degree ? `, ${doctor.degree}` : ''}</Text>
+                        <Text style={{ fontFamily: 'Helvetica', fontSize: 9, color: '#64748b', marginBottom: 3 }}>Signature</Text>
+                        <Text style={styles.signatureName}>Dr. {doctor.full_name}</Text>
                     </View>
                 </View>
             </Page>

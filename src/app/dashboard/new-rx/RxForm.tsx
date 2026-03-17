@@ -431,7 +431,7 @@ export function RxForm({ doctor, initialPatients }: { doctor: any, initialPatien
                                                     inputMode="numeric"
                                                     pattern="[0-9]*"
                                                     value={med.duration}
-                                                    onChange={(e) => updateMedicineField(index, 'duration', e.target.value)}
+                                                    onChange={(e) => updateMedicineField(index, 'duration', e.target.value.replace(/\D/g, ''))}
                                                     className="w-full rounded-lg border-slate-300 shadow-sm focus:border-[#4C8EAB] focus:ring-[#4C8EAB] sm:text-sm pl-3 pr-20 py-2 border text-[#1A202C] placeholder-slate-400"
                                                     placeholder="e.g. 10"
                                                     autoFocus

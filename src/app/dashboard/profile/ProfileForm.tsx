@@ -225,6 +225,7 @@ export function ProfileForm({ initialData, userId, authProvider }: ProfileFormPr
                                 onChange={handleChange}
                                 placeholder="e.g. Dr. John Doe"
                                 className="mt-1 block w-full rounded-lg border-slate-300 shadow-sm focus:border-[#4C8EAB] focus:ring-[#4C8EAB] sm:text-sm px-4 py-2 border text-[#1A202C] placeholder-slate-400"
+                                required
                             />
                         </div>
                         <div>
@@ -251,6 +252,7 @@ export function ProfileForm({ initialData, userId, authProvider }: ProfileFormPr
                             onChange={handleChange}
                             placeholder="e.g. City Care Hospital"
                             className="mt-1 block w-full rounded-lg border-slate-300 shadow-sm focus:border-[#4C8EAB] focus:ring-[#4C8EAB] sm:text-sm px-4 py-2 border text-[#1A202C] placeholder-slate-400"
+                            required
                         />
                     </div>
 
@@ -278,6 +280,7 @@ export function ProfileForm({ initialData, userId, authProvider }: ProfileFormPr
                                 onChange={handleChange}
                                 placeholder="+91 9876543210"
                                 className="mt-1 block w-full rounded-lg border-slate-300 shadow-sm focus:border-[#4C8EAB] focus:ring-[#4C8EAB] sm:text-sm px-4 py-2 border text-[#1A202C] placeholder-slate-400"
+                                required
                             />
                         </div>
                         <div>
@@ -290,6 +293,7 @@ export function ProfileForm({ initialData, userId, authProvider }: ProfileFormPr
                                 onChange={handleChange}
                                 placeholder="e.g. DMC123456"
                                 className="mt-1 block w-full rounded-lg border-slate-300 shadow-sm focus:border-[#4C8EAB] focus:ring-[#4C8EAB] sm:text-sm px-4 py-2 border text-[#1A202C] placeholder-slate-400"
+                                required
                             />
                         </div>
                     </div>
