@@ -27,13 +27,23 @@ export function AuthGuard({ children }: { children: React.ReactNode }) {
     const router = useRouter()
 
     const fetchDoctorProfile = async (userId: string) => {
-        const supabase = createClient()
-        const { data } = await supabase
-            .from('doctors')
-            .select('*')
-            .eq('id', userId)
-            .single()
-        setDoctor(data)
+        try {
+            const supabase = createClient()
+            const { data, error } = await supabase
+                .from('doctors')
+                .select('*')
+                .eq('id', userId)
+                .single()
+
+            if (error) {
+                console.error('Error fetching doctor profile:', error)
+            }
+
+            setDoctor(data || null)
+        } catch (error) {
+            console.error('Unexpected error fetching doctor profile:', error)
+            setDoctor(null)
+        }
     }
 
     const refreshDoctorProfile = async () => {
@@ -46,26 +56,44 @@ export function AuthGuard({ children }: { children: React.ReactNode }) {
         const supabase = createClient()
 
         const initAuth = async () => {
-            const { data: { session } } = await supabase.auth.getSession()
-            if (!session) {
-                router.push('/login')
-            } else {
-                setUser(session.user)
-                await fetchDoctorProfile(session.user.id)
+            try {
+                const { data: { session }, error } = await supabase.auth.getSession()
+
+                if (error) {
+                    console.error('Error getting session:', error)
+                }
+
+                if (!session) {
+                    router.push('/login')
+                } else {
+                    setUser(session.user)
+                    setLoading(false) // Unblock UI early so DashboardPage can show skeletons
+                    await fetchDoctorProfile(session.user.id)
+                }
+            } catch (error) {
+                console.error('Unexpected error during initAuth:', error)
+            } finally {
+                setLoading(false)
             }
-            setLoading(false)
         }
 
         initAuth()
 
         const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
-            if (!session) {
-                router.push('/login')
-            } else {
-                setUser(session.user)
-                if (!doctor) {
-                    await fetchDoctorProfile(session.user.id)
+            try {
+                if (!session) {
+                    router.push('/login')
+                } else {
+                    setUser(session.user)
+                    setLoading(false) // Unblock UI early
+                    if (!doctor) {
+                        await fetchDoctorProfile(session.user.id)
+                    }
                 }
+            } catch (error) {
+                console.error('Unexpected error in onAuthStateChange:', error)
+            } finally {
+                setLoading(false)
             }
         })
 

@@ -49,30 +49,50 @@ export default function DashboardPage() {
         const fetchDashboardData = async () => {
             const supabase = createClient()
 
-            // Fetch Stats
-            const [patientRes, rxRes, medRes] = await Promise.all([
-                supabase.from('patients').select('id', { count: 'exact', head: true }).eq('doctor_id', user.id),
-                supabase.from('prescriptions').select('id', { count: 'exact', head: true }).eq('doctor_id', user.id),
-                supabase.from('global_medicines').select('id', { count: 'exact', head: true })
-            ])
+            // Fetch Stats concurrently
+            const fetchStats = async () => {
+                try {
+                    const [patientRes, rxRes, medRes] = await Promise.all([
+                        supabase.from('patients').select('id', { count: 'exact', head: true }).eq('doctor_id', user.id),
+                        supabase.from('prescriptions').select('id', { count: 'exact', head: true }).eq('doctor_id', user.id),
+                        supabase.from('global_medicines').select('id', { count: 'estimated', head: true })
+                    ])
 
-            setStats({
-                patients: patientRes.count || 0,
-                prescriptions: rxRes.count || 0,
-                medicines: medRes.count || 0
-            })
-            setLoadingStats(false)
+                    setStats({
+                        patients: patientRes.count || 0,
+                        prescriptions: rxRes.count || 0,
+                        medicines: medRes.count || 0
+                    })
+                } catch (error) {
+                    console.error("Error fetching stats:", error)
+                } finally {
+                    setLoadingStats(false)
+                }
+            }
 
-            // Fetch Patients
-            const { data: recentPatients } = await supabase
-                .from('patients')
-                .select('id, name, custom_patient_id, created_at')
-                .eq('doctor_id', user.id)
-                .order('created_at', { ascending: false })
-                .limit(5)
+            // Fetch Patients concurrently
+            const fetchPatients = async () => {
+                try {
+                    const { data: recentPatients, error } = await supabase
+                        .from('patients')
+                        .select('id, name, custom_patient_id, created_at')
+                        .eq('doctor_id', user.id)
+                        .order('created_at', { ascending: false })
+                        .limit(5)
 
-            setPatients(recentPatients || [])
-            setLoadingPatients(false)
+                    if (error) console.error("Error fetching patients:", error)
+
+                    setPatients(recentPatients || [])
+                } catch (error) {
+                    console.error("Error fetching patients:", error)
+                } finally {
+                    setLoadingPatients(false)
+                }
+            }
+
+            // Fire them at the same time
+            fetchStats()
+            fetchPatients()
         }
 
         fetchDashboardData()
