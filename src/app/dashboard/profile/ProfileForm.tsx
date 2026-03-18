@@ -6,6 +6,7 @@ import { createClient } from '@/utils/supabase/client'
 import { useRouter } from 'next/navigation'
 import { Upload, X } from 'lucide-react'
 import { toast } from 'sonner'
+import { useDashboardContext } from '@/components/AuthGuard'
 
 type DoctorProfile = {
     full_name: string
@@ -24,6 +25,7 @@ type ProfileFormProps = {
 }
 
 export function ProfileForm({ initialData, userId, authProvider }: ProfileFormProps) {
+    const { refreshDoctorProfile } = useDashboardContext()
     const [formData, setFormData] = useState({
         clinic_name: initialData?.clinic_name || '',
         full_name: initialData?.full_name || '',
@@ -172,6 +174,7 @@ export function ProfileForm({ initialData, userId, authProvider }: ProfileFormPr
             }
 
             toast.success('Profile saved successfully!')
+            await refreshDoctorProfile()
             setUploadedSignatureUrl(null)
             setUploadedSignatureBlob(null)
             setShowSignatureEditor(false)

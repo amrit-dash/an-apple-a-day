@@ -1,32 +1,20 @@
 'use client'
 
 import { createClient } from '@/utils/supabase/client'
-import { useRouter } from 'next/navigation'
 import { PatientsClient } from './PatientsClient'
 import { useEffect, useState } from 'react'
+import { useDashboardContext } from '@/components/AuthGuard'
 
 export default function PatientsPage() {
-    const router = useRouter()
+    const { user, doctor } = useDashboardContext()
     const [loading, setLoading] = useState(true)
-    const [data, setData] = useState<{ doctor: any, patients: any[] }>({ doctor: null, patients: [] })
+    const [patients, setPatients] = useState<any[]>([])
 
     useEffect(() => {
         const fetchPatients = async () => {
             const supabase = createClient()
-            const { data: { user } } = await supabase.auth.getUser()
 
-            if (!user) {
-                router.push('/login')
-                return
-            }
-
-            const { data: doctor } = await supabase
-                .from('doctors')
-                .select('*')
-                .eq('id', user.id)
-                .single()
-
-            const { data: patients, error } = await supabase
+            const { data: patientsList, error } = await supabase
                 .from('patients')
                 .select(`
               id, name, custom_patient_id, age, gender, contact, created_at, updated_at,
@@ -50,12 +38,12 @@ export default function PatientsPage() {
                 console.error('Error fetching patients:', error)
             }
 
-            setData({ doctor, patients: patients || [] })
+            setPatients(patientsList || [])
             setLoading(false)
         }
 
         fetchPatients()
-    }, [router])
+    }, [user.id])
 
     return (
         <div className="space-y-6">
@@ -69,7 +57,7 @@ export default function PatientsPage() {
                     <div className="h-8 w-8 animate-spin rounded-full border-4 border-[#4C8EAB] border-t-transparent"></div>
                 </div>
             ) : (
-                <PatientsClient doctor={data.doctor} patients={data.patients} />
+                <PatientsClient doctor={doctor} patients={patients} />
             )}
         </div>
     )

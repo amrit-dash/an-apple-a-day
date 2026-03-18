@@ -1,10 +1,10 @@
 'use client'
 
 import { createClient } from '@/utils/supabase/client'
-import { useRouter } from 'next/navigation'
 import { Users, FileText, Pill, Plus, AlertCircle, ArrowRight } from 'lucide-react'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
+import { useDashboardContext } from '@/components/AuthGuard'
 
 function StatsSkeleton() {
     return (
@@ -36,8 +36,7 @@ function TableSkeleton() {
 }
 
 export default function DashboardPage() {
-    const router = useRouter()
-    const [userId, setUserId] = useState<string | null>(null)
+    const { user, doctor } = useDashboardContext()
     const [isProfileIncomplete, setIsProfileIncomplete] = useState<boolean>(false)
     const [stats, setStats] = useState({ patients: 0, prescriptions: 0, medicines: 0 })
     const [patients, setPatients] = useState<any[]>([])
@@ -45,20 +44,10 @@ export default function DashboardPage() {
     const [loadingPatients, setLoadingPatients] = useState(true)
 
     useEffect(() => {
+        setIsProfileIncomplete(!doctor || !doctor.full_name?.trim() || !doctor.registration_number?.trim() || !doctor.phone?.trim() || !doctor.clinic_name?.trim())
+
         const fetchDashboardData = async () => {
             const supabase = createClient()
-            const { data: { user } } = await supabase.auth.getUser()
-
-            if (!user) {
-                router.push('/login')
-                return
-            }
-
-            setUserId(user.id)
-
-            // Check profile completion
-            const { data: doctor } = await supabase.from('doctors').select('*').eq('id', user.id).single()
-            setIsProfileIncomplete(!doctor || !doctor.full_name?.trim() || !doctor.registration_number?.trim() || !doctor.phone?.trim() || !doctor.clinic_name?.trim())
 
             // Fetch Stats
             const [patientRes, rxRes, medRes] = await Promise.all([
@@ -87,7 +76,7 @@ export default function DashboardPage() {
         }
 
         fetchDashboardData()
-    }, [router])
+    }, [user.id, doctor])
 
     return (
         <div className="space-y-8 pb-10">

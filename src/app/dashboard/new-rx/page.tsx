@@ -2,47 +2,40 @@
 
 import { createClient } from '@/utils/supabase/client'
 import { RxForm } from './RxForm'
-import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { UserCircle, AlertCircle } from 'lucide-react'
 import { useEffect, useState } from 'react'
+import { useDashboardContext } from '@/components/AuthGuard'
 
 export default function NewRxPage() {
-    const router = useRouter()
+    const { user, doctor } = useDashboardContext()
     const [loading, setLoading] = useState(true)
-    const [data, setData] = useState<{ doctor: any, patients: any[], isProfileIncomplete: boolean } | null>(null)
+    const [patients, setPatients] = useState<any[]>([])
+
+    const isProfileIncomplete = !doctor || !doctor.full_name?.trim() || !doctor.registration_number?.trim() || !doctor.phone?.trim() || !doctor.clinic_name?.trim()
 
     useEffect(() => {
         const fetchInitialData = async () => {
-            const supabase = createClient()
-            const { data: { user } } = await supabase.auth.getUser()
-
-            if (!user) {
-                router.push('/login')
+            if (isProfileIncomplete) {
+                setLoading(false)
                 return
             }
 
-            const { data: doctor } = await supabase
-                .from('doctors')
-                .select('*')
-                .eq('id', user.id)
-                .single()
-
-            const isProfileIncomplete = !doctor || !doctor.full_name?.trim() || !doctor.registration_number?.trim() || !doctor.phone?.trim() || !doctor.clinic_name?.trim()
+            const supabase = createClient()
 
             // Fetch doctors patients to pre-fill autocomplete
-            const { data: patients } = await supabase
+            const { data: patientsList } = await supabase
                 .from('patients')
                 .select('id, name, custom_patient_id, age, gender, contact')
                 .eq('doctor_id', user.id)
                 .order('name', { ascending: true })
 
-            setData({ doctor, patients: patients || [], isProfileIncomplete })
+            setPatients(patientsList || [])
             setLoading(false)
         }
 
         fetchInitialData()
-    }, [router])
+    }, [user.id, isProfileIncomplete])
 
     if (loading) {
         return (
@@ -52,9 +45,7 @@ export default function NewRxPage() {
         )
     }
 
-    if (!data) return null
-
-    if (data.isProfileIncomplete) {
+    if (isProfileIncomplete) {
         return (
             <div className="flex flex-col items-center justify-center min-h-[60vh] max-w-lg mx-auto text-center space-y-6">
                 <div className="bg-amber-100 text-amber-600 p-4 rounded-full">
@@ -84,7 +75,7 @@ export default function NewRxPage() {
                 <p className="mt-1 text-sm text-slate-500">Fill in the details below to generate a new prescription.</p>
             </div>
 
-            <RxForm doctor={data.doctor} initialPatients={data.patients} />
+            <RxForm doctor={doctor} initialPatients={patients} />
         </div>
     )
 }
