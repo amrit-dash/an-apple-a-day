@@ -1,14 +1,91 @@
-import { signup } from '@/app/auth/actions'
+'use client'
+
+import { useState, Suspense } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
+import { createClient } from '@/utils/supabase/client'
 import { GoogleSignInButton } from '@/components/GoogleSignInButton'
 
-export default async function RegisterPage({
-    searchParams,
-}: {
-    searchParams: Promise<{ message: string }>
-}) {
-    const { message } = await searchParams
+function RegisterForm() {
+    const router = useRouter()
+    const searchParams = useSearchParams()
+    const urlMessage = searchParams.get('message')
+    const [message, setMessage] = useState<string | null>(urlMessage)
+    const [loading, setLoading] = useState(false)
 
+    const handleRegister = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault()
+        setLoading(true)
+        setMessage(null)
+
+        const formData = new FormData(e.currentTarget)
+        const email = formData.get('email') as string
+        const password = formData.get('password') as string
+
+        const supabase = createClient()
+        const { error } = await supabase.auth.signUp({
+            email,
+            password,
+        })
+
+        if (error) {
+            setMessage(error.message || 'Could not create user')
+            setLoading(false)
+        } else {
+            router.push('/dashboard')
+            router.refresh()
+        }
+    }
+
+    return (
+        <form className="mt-8 space-y-6" onSubmit={handleRegister}>
+            <div className="space-y-4">
+                <div>
+                    <label htmlFor="email" className="block text-sm font-medium text-slate-700">Email address</label>
+                    <input
+                        id="email"
+                        name="email"
+                        type="email"
+                        autoComplete="email"
+                        required
+                        className="mt-1 block w-full rounded-lg border border-gray-300 px-4 py-3 text-[#1A202C] shadow-sm focus:border-[#4C8EAB] focus:outline-none focus:ring-1 focus:ring-[#4C8EAB] placeholder:text-slate-400 sm:text-sm"
+                        placeholder="doctor@hospital.com"
+                    />
+                </div>
+                <div>
+                    <label htmlFor="password" className="block text-sm font-medium text-slate-700">Password</label>
+                    <input
+                        id="password"
+                        name="password"
+                        type="password"
+                        autoComplete="new-password"
+                        required
+                        className="mt-1 block w-full rounded-lg border border-gray-300 px-4 py-3 text-[#1A202C] shadow-sm focus:border-[#4C8EAB] focus:outline-none focus:ring-1 focus:ring-[#4C8EAB] placeholder:text-slate-400 sm:text-sm"
+                        placeholder="••••••••"
+                    />
+                </div>
+            </div>
+
+            {message && (
+                <div className="text-sm text-red-600 bg-red-50 border border-red-100 p-3 rounded-lg text-center">{message}</div>
+            )}
+
+            <div>
+                <button
+                    type="submit"
+                    disabled={loading}
+                    className="flex w-full justify-center items-center gap-2 rounded-lg bg-[#4C8EAB] px-4 py-3 text-sm font-semibold text-white shadow-sm hover:bg-[#3A738F] focus:outline-none focus:ring-2 focus:ring-[#4C8EAB] focus:ring-offset-2 transition-colors disabled:opacity-70"
+                >
+                    {loading ? (
+                        <div className="h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                    ) : 'Sign up'}
+                </button>
+            </div>
+        </form>
+    )
+}
+
+export default function RegisterPage() {
     return (
         <div className="flex min-h-screen items-center justify-center bg-slate-50 p-4 font-sans">
             <div className="w-full max-w-md space-y-8 rounded-2xl bg-white p-8 shadow-md border border-slate-200">
@@ -32,47 +109,10 @@ export default async function RegisterPage({
                     </div>
                 </div>
 
-                <form className="mt-8 space-y-6" action={signup}>
-                    <div className="space-y-4">
-                        <div>
-                            <label htmlFor="email" className="block text-sm font-medium text-slate-700">Email address</label>
-                            <input
-                                id="email"
-                                name="email"
-                                type="email"
-                                autoComplete="email"
-                                required
-                                className="mt-1 block w-full rounded-lg border border-gray-300 px-4 py-3 text-[#1A202C] shadow-sm focus:border-[#4C8EAB] focus:outline-none focus:ring-1 focus:ring-[#4C8EAB] placeholder:text-slate-400 sm:text-sm"
-                                placeholder="doctor@hospital.com"
-                            />
-                        </div>
-                        <div>
-                            <label htmlFor="password" className="block text-sm font-medium text-slate-700">Password</label>
-                            <input
-                                id="password"
-                                name="password"
-                                type="password"
-                                autoComplete="new-password"
-                                required
-                                className="mt-1 block w-full rounded-lg border border-gray-300 px-4 py-3 text-[#1A202C] shadow-sm focus:border-[#4C8EAB] focus:outline-none focus:ring-1 focus:ring-[#4C8EAB] placeholder:text-slate-400 sm:text-sm"
-                                placeholder="••••••••"
-                            />
-                        </div>
-                    </div>
+                <Suspense fallback={<div className="flex justify-center p-4"><div className="h-6 w-6 animate-spin rounded-full border-2 border-[#4C8EAB] border-t-transparent" /></div>}>
+                    <RegisterForm />
+                </Suspense>
 
-                    {message && (
-                        <div className="text-sm text-red-600 bg-red-50 border border-red-100 p-3 rounded-lg text-center">{message}</div>
-                    )}
-
-                    <div>
-                        <button
-                            type="submit"
-                            className="flex w-full justify-center rounded-lg bg-[#4C8EAB] px-4 py-3 text-sm font-semibold text-white shadow-sm hover:bg-[#3A738F] focus:outline-none focus:ring-2 focus:ring-[#4C8EAB] focus:ring-offset-2 transition-colors"
-                        >
-                            Sign up
-                        </button>
-                    </div>
-                </form>
                 <p className="mt-6 text-center text-sm text-slate-600">
                     Already have an account?{' '}
                     <Link href="/login" className="font-semibold text-[#4C8EAB] hover:text-blue-500">

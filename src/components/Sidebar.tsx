@@ -2,20 +2,27 @@
 
 import Link from 'next/link'
 import Image from 'next/image'
-import { usePathname } from 'next/navigation'
-import { signout } from '@/app/auth/actions'
+import { usePathname, useRouter } from 'next/navigation'
 import { LayoutDashboard, Users, FilePlus, UserCircle, LogOut, Menu, X } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import logoSvg from '@/assets/logo.svg'
+import { createClient } from '@/utils/supabase/client'
 
 export function Sidebar() {
     const pathname = usePathname()
+    const router = useRouter()
     const [isOpen, setIsOpen] = useState(false)
 
     // Close sidebar on route change on mobile
     useEffect(() => {
         setIsOpen(false)
     }, [pathname])
+
+    const handleSignOut = async () => {
+        const supabase = createClient()
+        await supabase.auth.signOut()
+        router.push('/login')
+    }
 
     const links = [
         { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
@@ -69,8 +76,8 @@ export function Sidebar() {
                                 key={link.name}
                                 href={link.href}
                                 className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-colors ${isActive
-                                        ? 'bg-[#EBF4F8] font-semibold text-[#1A202C]'
-                                        : 'font-medium text-slate-600 hover:bg-slate-50 hover:text-[#1A202C]'
+                                    ? 'bg-[#EBF4F8] font-semibold text-[#1A202C]'
+                                    : 'font-medium text-slate-600 hover:bg-slate-50 hover:text-[#1A202C]'
                                     }`}
                             >
                                 <Icon className={`w-5 h-5 ${isActive ? 'text-[#1A202C]' : 'text-slate-500'}`} />
@@ -80,15 +87,14 @@ export function Sidebar() {
                     })}
                 </nav>
                 <div className="border-t border-slate-200 p-4">
-                    <form action={signout}>
-                        <button
-                            type="submit"
-                            className="flex w-full items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 hover:text-[#1A202C] focus:outline-none focus:ring-2 focus:ring-slate-200 focus:ring-offset-1"
-                        >
-                            <LogOut className="w-4 h-4" />
-                            Sign Out
-                        </button>
-                    </form>
+                    <button
+                        type="button"
+                        onClick={handleSignOut}
+                        className="flex w-full items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 hover:text-[#1A202C] focus:outline-none focus:ring-2 focus:ring-slate-200 focus:ring-offset-1"
+                    >
+                        <LogOut className="w-4 h-4" />
+                        Sign Out
+                    </button>
                 </div>
             </div>
         </>

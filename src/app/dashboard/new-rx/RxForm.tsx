@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { Plus, Trash2, User, Activity, FileDown, RotateCcw, Stethoscope, ChevronDown, X } from 'lucide-react'
 import { toast } from 'sonner'
-import { savePrescription } from '@/app/actions/rx'
+import { savePrescription } from '@/utils/rxClient'
 import { createClient } from '@/utils/supabase/client'
 import { PDFDownloadLink } from '@react-pdf/renderer'
 import { PrescriptionPDF } from '@/components/PrescriptionPDF'

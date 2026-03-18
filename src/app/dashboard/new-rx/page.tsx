@@ -1,29 +1,60 @@
-import { createClient } from '@/utils/supabase/server'
+'use client'
+
+import { createClient } from '@/utils/supabase/client'
 import { RxForm } from './RxForm'
-import { redirect } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { UserCircle, AlertCircle } from 'lucide-react'
+import { useEffect, useState } from 'react'
 
-export default async function NewRxPage() {
-    const supabase = await createClient()
+export default function NewRxPage() {
+    const router = useRouter()
+    const [loading, setLoading] = useState(true)
+    const [data, setData] = useState<{ doctor: any, patients: any[], isProfileIncomplete: boolean } | null>(null)
 
-    const {
-        data: { user },
-    } = await supabase.auth.getUser()
+    useEffect(() => {
+        const fetchInitialData = async () => {
+            const supabase = createClient()
+            const { data: { user } } = await supabase.auth.getUser()
 
-    if (!user) {
-        redirect('/login')
+            if (!user) {
+                router.push('/login')
+                return
+            }
+
+            const { data: doctor } = await supabase
+                .from('doctors')
+                .select('*')
+                .eq('id', user.id)
+                .single()
+
+            const isProfileIncomplete = !doctor || !doctor.full_name?.trim() || !doctor.registration_number?.trim() || !doctor.phone?.trim() || !doctor.clinic_name?.trim()
+
+            // Fetch doctors patients to pre-fill autocomplete
+            const { data: patients } = await supabase
+                .from('patients')
+                .select('id, name, custom_patient_id, age, gender, contact')
+                .eq('doctor_id', user.id)
+                .order('name', { ascending: true })
+
+            setData({ doctor, patients: patients || [], isProfileIncomplete })
+            setLoading(false)
+        }
+
+        fetchInitialData()
+    }, [router])
+
+    if (loading) {
+        return (
+            <div className="flex justify-center p-12">
+                <div className="h-8 w-8 animate-spin rounded-full border-4 border-[#4C8EAB] border-t-transparent"></div>
+            </div>
+        )
     }
 
-    const { data: doctor } = await supabase
-        .from('doctors')
-        .select('*')
-        .eq('id', user.id)
-        .single()
+    if (!data) return null
 
-    const isProfileIncomplete = !doctor || !doctor.full_name?.trim() || !doctor.registration_number?.trim() || !doctor.phone?.trim() || !doctor.clinic_name?.trim()
-
-    if (isProfileIncomplete) {
+    if (data.isProfileIncomplete) {
         return (
             <div className="flex flex-col items-center justify-center min-h-[60vh] max-w-lg mx-auto text-center space-y-6">
                 <div className="bg-amber-100 text-amber-600 p-4 rounded-full">
@@ -46,22 +77,14 @@ export default async function NewRxPage() {
         )
     }
 
-    // Fetch doctors patients to pre-fill autocomplete
-    const { data: patients } = await supabase
-        .from('patients')
-        .select('id, name, custom_patient_id, age, gender, contact')
-        .eq('doctor_id', user.id)
-
     return (
-        <div className="space-y-6 max-w-4xl mx-auto pb-10">
+        <div className="space-y-6 max-w-5xl mx-auto">
             <div>
-                <h2 className="text-2xl font-bold text-[#1A202C] tracking-tight">New Prescription</h2>
-                <p className="mt-1 text-sm text-slate-500">
-                    Fill in the details below to generate and save a new prescription.
-                </p>
+                <h2 className="text-2xl font-bold tracking-tight text-[#1A202C]">New Prescription</h2>
+                <p className="mt-1 text-sm text-slate-500">Fill in the details below to generate a new prescription.</p>
             </div>
 
-            <RxForm doctor={doctor} initialPatients={patients || []} />
+            <RxForm doctor={data.doctor} initialPatients={data.patients} />
         </div>
     )
 }
