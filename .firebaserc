@@ -1,5 +1,18 @@
 {
   "projects": {
     "default": "rx-workspace"
-  }
+  },
+  "targets": {
+    "rx-workspace": {
+      "hosting": {
+        "main": [
+          "rx-workspace"
+        ],
+        "alt": [
+          "an-apple-a-day"
+        ]
+      }
+    }
+  },
+  "etags": {}
 }

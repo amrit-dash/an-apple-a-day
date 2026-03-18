@@ -1,0 +1,356 @@
+[2026-03-18T00:39:56.540Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[2026-03-18T00:39:56.541Z] > authorizing via signed-in user (amrit.dash60@gmail.com)
+[2026-03-18T00:39:56.541Z] [iam] checking project rx-workspace for permissions ["firebase.projects.get","firebasehosting.sites.update"]
+[2026-03-18T00:39:56.541Z] Checked if tokens are valid: true, expires at: 1773797871282
+[2026-03-18T00:39:56.542Z] Checked if tokens are valid: true, expires at: 1773797871282
+[2026-03-18T00:39:56.542Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/rx-workspace:testIamPermissions [none]
+[2026-03-18T00:39:56.542Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/rx-workspace:testIamPermissions  x-goog-user-project=rx-workspace
+[2026-03-18T00:39:56.542Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/rx-workspace:testIamPermissions {"permissions":["firebase.projects.get","firebasehosting.sites.update"]}
+[2026-03-18T00:39:58.163Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/rx-workspace:testIamPermissions 200
+[2026-03-18T00:39:58.164Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/rx-workspace:testIamPermissions {"permissions":["firebase.projects.get","firebasehosting.sites.update"]}
+[2026-03-18T00:39:58.165Z] Checked if tokens are valid: true, expires at: 1773797871282
+[2026-03-18T00:39:58.165Z] Checked if tokens are valid: true, expires at: 1773797871282
+[2026-03-18T00:39:58.165Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/rx-workspace [none]
+[2026-03-18T00:39:58.908Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/rx-workspace 200
+[2026-03-18T00:39:58.908Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/rx-workspace {"projectId":"rx-workspace","projectNumber":"900248935355","displayName":"Rx Workspace","name":"projects/rx-workspace","resources":{"hostingSite":"rx-workspace"},"state":"ACTIVE","etag":"1_55a58649-cc34-4b22-9e31-9a599646c1e9"}
+
+   Thank you for trying our early preview of Next.js support on Firebase Hosting.
+   During the preview, support is best-effort and breaking changes can be expected. Proceed with caution.
+   The integration is known to work with Next.js version 12 - 15.0. You may encounter errors.
+
+   Documentation: https://firebase.google.com/docs/hosting/frameworks/nextjs
+   File a bug: https://github.com/firebase/firebase-tools/issues/new?template=bug_report.md
+   Submit a feature request: https://github.com/firebase/firebase-tools/issues/new?template=feature_request.md
+
+   We'd love to learn from you. Express your interest in helping us shape the future of Firebase Hosting: https://goo.gle/41enW5X
+
+[2026-03-18T00:40:01.760Z] Checked if tokens are valid: true, expires at: 1773797871282
+[2026-03-18T00:40:01.761Z] Checked if tokens are valid: true, expires at: 1773797871282
+[2026-03-18T00:40:01.761Z] >>> [apiv2][query] GET https://firebasehosting.googleapis.com/v1beta1/projects/rx-workspace/sites/rx-workspace [none]
+[2026-03-18T00:40:03.077Z] <<< [apiv2][status] GET https://firebasehosting.googleapis.com/v1beta1/projects/rx-workspace/sites/rx-workspace 200
+[2026-03-18T00:40:03.077Z] <<< [apiv2][body] GET https://firebasehosting.googleapis.com/v1beta1/projects/rx-workspace/sites/rx-workspace {"name":"projects/rx-workspace/sites/rx-workspace","defaultUrl":"https://rx-workspace.web.app","type":"DEFAULT_SITE"}
+▲ Next.js 16.1.7 (Turbopack)
+
+- Environments: .env.local
+
+
+  Creating an optimized production build ...
+
+
+
+[80.44ms] [@tailwindcss/postcss] src/app/globals.css
+[ 0.04ms]   ↳ Quick bail check
+[20.07ms]   ↳ Setup compiler
+[ 0.27ms]     ↳ PostCSS AST -> Tailwind CSS AST
+[19.78ms]     ↳ Create compiler
+[ 0.05ms]   ↳ Register full rebuild paths
+[ 5.24ms]   ↳ Setup scanner
+[ 5.49ms]   ↳ Scan for candidates
+[ 4.29ms]   ↳ Register dependency messages
+[16.64ms]   ↳ Build utilities
+[27.02ms]   ↳ Optimization
+[ 0.50ms]     ↳ AST -> CSS
+[23.31ms]     ↳ Lightning CSS
+
+[ 3.15ms]     ↳ CSS -> PostCSS AST
+[ 1.36ms]   ↳ Update PostCSS AST
+
+
+✓ Compiled successfully in 3.0s
+
+  Running TypeScript ...
+
+  Collecting page data using 9 workers ...
+
+  Generating static pages using 9 workers (0/13) ...
+
+  Generating static pages using 9 workers (3/13) 
+
+  Generating static pages using 9 workers (6/13) 
+
+  Generating static pages using 9 workers (9/13) 
+
+✓ Generating static pages using 9 workers (13/13) in 181.4ms
+
+  Finalizing page optimization ...
+
+
+
+Route (app)
+┌ ○ /
+├ ○ /_not-found
+├ ƒ /auth/callback
+├ ƒ /dashboard
+├ ƒ /dashboard/new-rx
+├ ƒ /dashboard/patients
+├ ƒ /dashboard/profile
+├ ƒ /forgot-password
+├ ƒ /login
+├ ƒ /register
+└ ƒ /reset-password
+
+
+ƒ Proxy (Middleware)
+
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+
+
+Building a Cloud Function to run this application. This is needed due to:
+ • non-static component /auth/callback/route
+ • non-static component /dashboard/new-rx/page
+ • non-static component /dashboard/page
+ • non-static component /dashboard/patients/page
+ • non-static component /dashboard/profile/page
+[2026-03-18T00:40:11.837Z]  • non-static component /forgot-password/page
+[2026-03-18T00:40:11.837Z]  • non-static component /login/page
+[2026-03-18T00:40:11.837Z]  • non-static component /register/page
+[2026-03-18T00:40:11.837Z]  • non-static component /reset-password/page
+[2026-03-18T00:40:11.837Z]  • route with server action /dashboard/new-rx
+[2026-03-18T00:40:11.837Z]  • route with server action /dashboard
+[2026-03-18T00:40:11.837Z]  • route with server action /dashboard/patients
+[2026-03-18T00:40:11.837Z]  • route with server action /dashboard/profile
+
+[2026-03-18T00:40:13.511Z] Checked if tokens are valid: true, expires at: 1773797871282
+[2026-03-18T00:40:13.511Z] Checked if tokens are valid: true, expires at: 1773797871282
+[2026-03-18T00:40:13.511Z] >>> [apiv2][query] GET https://firebasehosting.googleapis.com/v1beta1/projects/rx-workspace/sites/rx-workspace [none]
+[2026-03-18T00:40:14.774Z] <<< [apiv2][status] GET https://firebasehosting.googleapis.com/v1beta1/projects/rx-workspace/sites/rx-workspace 200
+[2026-03-18T00:40:14.774Z] <<< [apiv2][body] GET https://firebasehosting.googleapis.com/v1beta1/projects/rx-workspace/sites/rx-workspace {"name":"projects/rx-workspace/sites/rx-workspace","defaultUrl":"https://rx-workspace.web.app","type":"DEFAULT_SITE"}
+⚠  This integration expects Node version 20, 22, or 24. You're running version 23, problems may be encountered. 
+npm warn EBADENGINE Unsupported engine {
+npm warn EBADENGINE   package: 'an-apple-a-day@0.1.0',
+npm warn EBADENGINE   required: { node: '22' },
+npm warn EBADENGINE   current: { node: 'v23.7.0', npm: '11.6.2' }
+npm warn EBADENGINE }
+npm warn EBADENGINE Unsupported engine {
+npm warn EBADENGINE   package: 'firebase-frameworks@0.11.8',
+npm warn EBADENGINE   required: { node: '^16.0.0 || ^18.0.0 || ^20.0.0 || ^22.0.0' },
+npm warn EBADENGINE   current: { node: 'v23.7.0', npm: '11.6.2' }
+npm warn EBADENGINE }
+
+up to date in 2s
+
+46 packages are looking for funding
+  run `npm fund` for details
+
+   Thank you for trying our early preview of Next.js support on Firebase Hosting.
+   During the preview, support is best-effort and breaking changes can be expected. Proceed with caution.
+   The integration is known to work with Next.js version 12 - 15.0. You may encounter errors.
+
+   Documentation: https://firebase.google.com/docs/hosting/frameworks/nextjs
+   File a bug: https://github.com/firebase/firebase-tools/issues/new?template=bug_report.md
+   Submit a feature request: https://github.com/firebase/firebase-tools/issues/new?template=feature_request.md
+
+   We'd love to learn from you. Express your interest in helping us shape the future of Firebase Hosting: https://goo.gle/41enW5X
+
+[2026-03-18T00:40:20.617Z] Checked if tokens are valid: true, expires at: 1773797871282
+[2026-03-18T00:40:20.617Z] Checked if tokens are valid: true, expires at: 1773797871282
+[2026-03-18T00:40:20.617Z] >>> [apiv2][query] GET https://firebasehosting.googleapis.com/v1beta1/projects/rx-workspace/sites/rx-workspace [none]
+[2026-03-18T00:40:21.939Z] <<< [apiv2][status] GET https://firebasehosting.googleapis.com/v1beta1/projects/rx-workspace/sites/rx-workspace 200
+[2026-03-18T00:40:21.939Z] <<< [apiv2][body] GET https://firebasehosting.googleapis.com/v1beta1/projects/rx-workspace/sites/rx-workspace {"name":"projects/rx-workspace/sites/rx-workspace","defaultUrl":"https://rx-workspace.web.app","type":"DEFAULT_SITE"}
+⚠  This integration expects Node version 20, 22, or 24. You're running version 23, problems may be encountered. 
+npm warn EBADENGINE Unsupported engine {
+npm warn EBADENGINE   package: 'an-apple-a-day@0.1.0',
+npm warn EBADENGINE   required: { node: '22' },
+npm warn EBADENGINE   current: { node: 'v23.7.0', npm: '11.6.2' }
+npm warn EBADENGINE }
+npm warn EBADENGINE Unsupported engine {
+npm warn EBADENGINE   package: 'firebase-frameworks@0.11.8',
+npm warn EBADENGINE   required: { node: '^16.0.0 || ^18.0.0 || ^20.0.0 || ^22.0.0' },
+npm warn EBADENGINE   current: { node: 'v23.7.0', npm: '11.6.2' }
+npm warn EBADENGINE }
+
+up to date in 2s
+
+46 packages are looking for funding
+  run `npm fund` for details
+[2026-03-18T00:40:24.022Z] [web frameworks] effective firebase.json:  {
+  "hosting": [
+    {
+      "target": "main",
+      "source": ".",
+      "frameworksBackend": {
+        "region": "us-central1"
+      },
+      "rewrites": [
+        {
+          "source": "**",
+          "function": {
+            "functionId": "ssrrxworkspace",
+            "region": "us-central1",
+            "pinTag": true
+          }
+        }
+      ],
+      "site": "rx-workspace",
+      "redirects": [],
+      "headers": [
+        {
+          "source": "/_global-error",
+          "headers": [
+            {
+              "key": "x-nextjs-stale-time",
+              "value": "300"
+            },
+            {
+              "key": "x-nextjs-prerender",
+              "value": "1"
+            },
+            {
+              "key": "x-next-cache-tags",
+              "value": "_N_T_/layout,_N_T_/_global-error/layout,_N_T_/_global-error/page,_N_T_/_global-error"
+            }
+          ]
+        },
+        {
+          "source": "/_not-found",
+          "headers": [
+            {
+              "key": "x-nextjs-stale-time",
+              "value": "300"
+            },
+            {
+              "key": "x-nextjs-prerender",
+              "value": "1"
+            },
+            {
+              "key": "x-next-cache-tags",
+              "value": "_N_T_/layout,_N_T_/_not-found/layout,_N_T_/_not-found/page,_N_T_/_not-found"
+            }
+          ]
+        },
+        {
+          "source": "/favicon.ico",
+          "headers": [
+            {
+              "key": "cache-control",
+              "value": "public, max-age=0, must-revalidate"
+            },
+            {
+              "key": "content-type",
+              "value": "image/x-icon"
+            },
+            {
+              "key": "x-next-cache-tags",
+              "value": "_N_T_/layout,_N_T_/favicon.ico/layout,_N_T_/favicon.ico/route,_N_T_/favicon.ico"
+            }
+          ]
+        }
+      ],
+      "cleanUrls": true,
+      "trailingSlash": false,
+      "public": ".firebase/rx-workspace/hosting",
+      "webFramework": "next_ssr"
+    },
+    {
+      "target": "alt",
+      "source": ".",
+      "frameworksBackend": {
+        "region": "us-central1"
+      },
+      "rewrites": [
+        {
+          "source": "**",
+          "function": {
+            "functionId": "ssranappleaday",
+            "region": "us-central1",
+            "pinTag": true
+          }
+        }
+      ],
+      "site": "an-apple-a-day",
+      "redirects": [],
+      "headers": [
+        {
+          "source": "/_global-error",
+          "headers": [
+            {
+              "key": "x-nextjs-stale-time",
+              "value": "300"
+            },
+            {
+              "key": "x-nextjs-prerender",
+              "value": "1"
+            },
+            {
+              "key": "x-next-cache-tags",
+              "value": "_N_T_/layout,_N_T_/_global-error/layout,_N_T_/_global-error/page,_N_T_/_global-error"
+            }
+          ]
+        },
+        {
+          "source": "/_not-found",
+          "headers": [
+            {
+              "key": "x-nextjs-stale-time",
+              "value": "300"
+            },
+            {
+              "key": "x-nextjs-prerender",
+              "value": "1"
+            },
+            {
+              "key": "x-next-cache-tags",
+              "value": "_N_T_/layout,_N_T_/_not-found/layout,_N_T_/_not-found/page,_N_T_/_not-found"
+            }
+          ]
+        },
+        {
+          "source": "/favicon.ico",
+          "headers": [
+            {
+              "key": "cache-control",
+              "value": "public, max-age=0, must-revalidate"
+            },
+            {
+              "key": "content-type",
+              "value": "image/x-icon"
+            },
+            {
+              "key": "x-next-cache-tags",
+              "value": "_N_T_/layout,_N_T_/favicon.ico/layout,_N_T_/favicon.ico/route,_N_T_/favicon.ico"
+            }
+          ]
+        }
+      ],
+      "cleanUrls": true,
+      "trailingSlash": false,
+      "public": ".firebase/an-apple-a-day/hosting",
+      "webFramework": "next_ssr"
+    }
+  ],
+  "functions": [
+    {
+      "source": ".firebase/rx-workspace/functions",
+      "codebase": "firebase-frameworks-rx-workspace"
+    },
+    {
+      "source": ".firebase/an-apple-a-day/functions",
+      "codebase": "firebase-frameworks-an-apple-a-day"
+    }
+  ]
+}
+[2026-03-18T00:40:24.023Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[2026-03-18T00:40:24.023Z] > authorizing via signed-in user (amrit.dash60@gmail.com)
+[2026-03-18T00:40:24.023Z] [iam] checking project rx-workspace for permissions ["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","firebase.projects.get"]
+[2026-03-18T00:40:24.023Z] Checked if tokens are valid: true, expires at: 1773797871282
+[2026-03-18T00:40:24.023Z] Checked if tokens are valid: true, expires at: 1773797871282
+[2026-03-18T00:40:24.023Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/rx-workspace:testIamPermissions [none]
+[2026-03-18T00:40:24.023Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/rx-workspace:testIamPermissions  x-goog-user-project=rx-workspace
+[2026-03-18T00:40:24.023Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/rx-workspace:testIamPermissions {"permissions":["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","firebase.projects.get"]}
+[2026-03-18T00:40:26.410Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/rx-workspace:testIamPermissions 200
+[2026-03-18T00:40:26.410Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/rx-workspace:testIamPermissions {"permissions":["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","firebase.projects.get"]}
+[2026-03-18T00:40:26.411Z] Checked if tokens are valid: true, expires at: 1773797871282
+[2026-03-18T00:40:26.411Z] Checked if tokens are valid: true, expires at: 1773797871282
+[2026-03-18T00:40:26.411Z] >>> [apiv2][query] GET https://cloudfunctions.googleapis.com/v1/projects/rx-workspace/locations/-/functions [none]
+[2026-03-18T00:40:26.693Z] <<< [apiv2][status] GET https://cloudfunctions.googleapis.com/v1/projects/rx-workspace/locations/-/functions 403
+[2026-03-18T00:40:26.693Z] <<< [apiv2][body] GET https://cloudfunctions.googleapis.com/v1/projects/rx-workspace/locations/-/functions {"error":{"code":403,"message":"Cloud Functions API has not been used in project rx-workspace before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/cloudfunctions.googleapis.com/overview?project=rx-workspace then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry.","status":"PERMISSION_DENIED","details":[{"@type":"type.googleapis.com/google.rpc.ErrorInfo","reason":"SERVICE_DISABLED","domain":"googleapis.com","metadata":{"service":"cloudfunctions.googleapis.com","consumer":"projects/rx-workspace","containerInfo":"rx-workspace","activationUrl":"https://console.developers.google.com/apis/api/cloudfunctions.googleapis.com/overview?project=rx-workspace","serviceTitle":"Cloud Functions API"}},{"@type":"type.googleapis.com/google.rpc.LocalizedMessage","locale":"en-US","message":"Cloud Functions API has not been used in project rx-workspace before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/cloudfunctions.googleapis.com/overview?project=rx-workspace then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry."},{"@type":"type.googleapis.com/google.rpc.Help","links":[{"description":"Google developers console API activation","url":"https://console.developers.google.com/apis/api/cloudfunctions.googleapis.com/overview?project=rx-workspace"}]}]}}
+[2026-03-18T00:40:26.694Z] [functions] failed to list functions for rx-workspace
+[2026-03-18T00:40:26.694Z] [functions] Request to https://cloudfunctions.googleapis.com/v1/projects/rx-workspace/locations/-/functions had HTTP Error: 403, Cloud Functions API has not been used in project rx-workspace before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/cloudfunctions.googleapis.com/overview?project=rx-workspace then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry.
+[2026-03-18T00:40:26.896Z] FirebaseError: Request to https://cloudfunctions.googleapis.com/v1/projects/rx-workspace/locations/-/functions had HTTP Error: 403, Cloud Functions API has not been used in project rx-workspace before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/cloudfunctions.googleapis.com/overview?project=rx-workspace then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry.
+    at responseToError (/Users/amrit/.nvm/versions/node/v23.7.0/lib/node_modules/firebase-tools/lib/responseToError.js:53:12)
+    at RetryOperation._fn (/Users/amrit/.nvm/versions/node/v23.7.0/lib/node_modules/firebase-tools/lib/apiv2.js:333:77)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+
+Error: Failed to list functions for rx-workspace
