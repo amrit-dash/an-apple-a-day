@@ -1,6 +1,6 @@
 'use client'
 
-import { createContext, useContext, useEffect, useState } from 'react'
+import { createContext, useContext, useEffect, useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/utils/supabase/client'
 
@@ -33,9 +33,9 @@ export function AuthGuard({ children }: { children: React.ReactNode }) {
                 .from('doctors')
                 .select('*')
                 .eq('id', userId)
-                .single()
+                .maybeSingle()
 
-            if (error) {
+            if (error && error.code !== 'PGRST116') {
                 console.error('Error fetching doctor profile:', error)
             }
 
@@ -55,45 +55,42 @@ export function AuthGuard({ children }: { children: React.ReactNode }) {
     useEffect(() => {
         const supabase = createClient()
 
-        const initAuth = async () => {
-            try {
-                const { data: { session }, error } = await supabase.auth.getSession()
+        // Fetch initial session
+        supabase.auth.getSession().then(({ data: { session }, error }) => {
+            if (error) console.error('Error getting session:', error)
 
-                if (error) {
-                    console.error('Error getting session:', error)
-                }
-
-                if (!session) {
-                    router.push('/login')
-                } else {
-                    setUser(session.user)
-                    setLoading(false) // Unblock UI early so DashboardPage can show skeletons
-                    await fetchDoctorProfile(session.user.id)
-                }
-            } catch (error) {
-                console.error('Unexpected error during initAuth:', error)
-            } finally {
+            if (!session) {
+                router.push('/login')
+            } else {
+                setUser(session.user)
                 setLoading(false)
+                fetchDoctorProfile(session.user.id)
             }
-        }
+        }).catch(err => {
+            console.error('Unexpected error during getSession:', err)
+            setLoading(false)
+        })
 
-        initAuth()
-
-        const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
+        // Listen for auth changes (token refresh, sign in, sign out)
+        const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
             try {
+                if (event === 'INITIAL_SESSION') return; // Handled by getSession() above
+
                 if (!session) {
                     router.push('/login')
                 } else {
                     setUser(session.user)
-                    setLoading(false) // Unblock UI early
+                    setLoading(false)
                     if (!doctor) {
-                        await fetchDoctorProfile(session.user.id)
+                        // DEFER the database call to break the gotrue-js lock reentrancy deadlock!
+                        // gotrue-js holds the session lock while firing this event. If we await a db query here, it deadlocks.
+                        setTimeout(() => {
+                            fetchDoctorProfile(session.user.id)
+                        }, 0)
                     }
                 }
             } catch (error) {
                 console.error('Unexpected error in onAuthStateChange:', error)
-            } finally {
-                setLoading(false)
             }
         })
 

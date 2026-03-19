@@ -34,7 +34,7 @@ export function Sidebar() {
     return (
         <>
             {/* Mobile Top Nav */}
-            <div className="md:hidden flex items-center justify-between bg-white border-b border-slate-200 px-4 h-16 fixed top-0 w-full z-40">
+            <div className="lg:hidden flex items-center justify-between bg-white border-b border-slate-200 px-4 h-16 fixed top-0 w-full z-40">
                 <div className="flex items-center gap-2">
                     <Image src={logoSvg} alt="Logo" width={28} height={28} />
                     <h1 className="text-xl font-bold tracking-tight text-[#1A202C]">Rx Workspace</h1>
@@ -47,20 +47,20 @@ export function Sidebar() {
             {/* Backdrop */}
             {isOpen && (
                 <div
-                    className="fixed inset-0 bg-slate-900/50 z-40 md:hidden backdrop-blur-sm"
+                    className="fixed inset-0 bg-slate-900/50 z-40 lg:hidden backdrop-blur-sm"
                     onClick={() => setIsOpen(false)}
                 />
             )}
 
             {/* Sidebar */}
-            <div className={`fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-[1px_0_5px_rgba(0,0,0,0.05)] border-r border-slate-200 flex flex-col transition-transform duration-300 ease-in-out md:translate-x-0 md:static md:h-full ${isOpen ? 'translate-x-0' : '-translate-x-full'}`}>
-                <div className="hidden md:flex h-16 items-center justify-center gap-2 border-b border-slate-200 px-4">
+            <div className={`fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-[1px_0_5px_rgba(0,0,0,0.05)] border-r border-slate-200 flex flex-col transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:h-full ${isOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+                <div className="hidden lg:flex h-16 items-center justify-center gap-2 border-b border-slate-200 px-4">
                     <Image src={logoSvg} alt="Logo" width={28} height={28} />
                     <h1 className="text-xl font-bold tracking-tight text-[#1A202C]">Rx Workspace</h1>
                 </div>
 
                 {/* Mobile Sidebar Header */}
-                <div className="flex md:hidden h-16 items-center justify-between gap-2 border-b border-slate-200 px-4">
+                <div className="flex lg:hidden h-16 items-center justify-between gap-2 border-b border-slate-200 px-4">
                     <div className="flex items-center gap-2">
                         <Image src={logoSvg} alt="Logo" width={28} height={28} />
                         <h1 className="text-xl font-bold tracking-tight text-[#1A202C]">Rx Workspace</h1>

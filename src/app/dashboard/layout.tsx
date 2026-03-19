@@ -13,8 +13,8 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
                 <Sidebar />
 
                 {/* Main Content Area */}
-                <main className="flex-1 overflow-y-auto p-6 pt-24 md:p-8 md:pt-8 w-full">
-                    <div className="mx-auto max-w-5xl bg-white rounded-xl shadow-sm border border-slate-200 p-6 md:p-8 min-h-full">
+                <main className="flex-1 overflow-y-auto p-6 pt-24 lg:p-8 lg:pt-8 w-full">
+                    <div className="mx-auto max-w-5xl bg-white rounded-xl shadow-sm border border-slate-200 p-6 lg:p-8 min-h-full">
                         {children}
                     </div>
                 </main>

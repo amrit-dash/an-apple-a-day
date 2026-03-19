@@ -3,12 +3,13 @@
 import { createClient } from '@/utils/supabase/client'
 import { Users, FileText, Pill, Plus, AlertCircle, ArrowRight } from 'lucide-react'
 import Link from 'next/link'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { useDashboardContext } from '@/components/AuthGuard'
+import { toast } from 'sonner'
 
 function StatsSkeleton() {
     return (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {[1, 2, 3].map((i) => (
                 <div key={i} className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 flex items-center gap-4 animate-pulse">
                     <div className="p-4 bg-slate-100 rounded-xl w-16 h-16 flex-shrink-0"></div>
@@ -49,28 +50,35 @@ export default function DashboardPage() {
         const fetchDashboardData = async () => {
             const supabase = createClient()
 
-            // Fetch Stats concurrently
+            // Fetch Stats sequentially to avoid Promise.all hanging
             const fetchStats = async () => {
                 try {
-                    const [patientRes, rxRes, medRes] = await Promise.all([
-                        supabase.from('patients').select('id', { count: 'exact', head: true }).eq('doctor_id', user.id),
-                        supabase.from('prescriptions').select('id', { count: 'exact', head: true }).eq('doctor_id', user.id),
-                        supabase.from('global_medicines').select('id', { count: 'estimated', head: true })
-                    ])
+                    let patientsCount = 0;
+                    let rxCount = 0;
+                    let medCount = 0;
+
+                    const pRes = await supabase.from('patients').select('id', { count: 'exact' }).eq('doctor_id', user.id).limit(1);
+                    patientsCount = pRes.count || 0;
+
+                    const rRes = await supabase.from('prescriptions').select('id', { count: 'exact' }).eq('doctor_id', user.id).limit(1);
+                    rxCount = rRes.count || 0;
+
+                    const mRes = await supabase.from('global_medicines').select('id', { count: 'exact' }).limit(1);
+                    medCount = mRes.count || 0;
 
                     setStats({
-                        patients: patientRes.count || 0,
-                        prescriptions: rxRes.count || 0,
-                        medicines: medRes.count || 0
+                        patients: patientsCount,
+                        prescriptions: rxCount,
+                        medicines: medCount
                     })
-                } catch (error) {
+                } catch (error: any) {
                     console.error("Error fetching stats:", error)
                 } finally {
                     setLoadingStats(false)
                 }
             }
 
-            // Fetch Patients concurrently
+            // Fetch Patients
             const fetchPatients = async () => {
                 try {
                     const { data: recentPatients, error } = await supabase
@@ -80,17 +88,19 @@ export default function DashboardPage() {
                         .order('created_at', { ascending: false })
                         .limit(5)
 
-                    if (error) console.error("Error fetching patients:", error)
+                    if (error) {
+                        console.error("Error fetching patients:", error)
+                    }
 
                     setPatients(recentPatients || [])
-                } catch (error) {
+                } catch (error: any) {
                     console.error("Error fetching patients:", error)
                 } finally {
                     setLoadingPatients(false)
                 }
             }
 
-            // Fire them at the same time
+            // Fire them
             fetchStats()
             fetchPatients()
         }
@@ -140,7 +150,7 @@ export default function DashboardPage() {
             <div>
                 <h3 className="text-sm font-semibold text-slate-800 uppercase tracking-wider mb-4">Overview</h3>
                 {loadingStats ? <StatsSkeleton /> : (
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                         <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 flex items-center gap-4">
                             <div className="p-4 bg-[#F2F7F9] text-[#4C8EAB] rounded-xl flex-shrink-0">
                                 <Users className="w-8 h-8" />
