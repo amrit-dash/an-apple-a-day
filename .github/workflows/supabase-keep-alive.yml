@@ -25,10 +25,16 @@ jobs:
       - name: Ping Supabase REST API
         run: |
           # A simple GET request to the REST API root is enough to count as activity
-          # The -s flag makes it silent, -f makes it fail on HTTP errors (e.g., 404, 500)
-          curl -s -f \
+          # We check the HTTP status code
+          HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
             -H "apikey: ${{ secrets.SUPABASE_ANON_KEY }}" \
             -H "Authorization: Bearer ${{ secrets.SUPABASE_ANON_KEY }}" \
-            "${{ secrets.SUPABASE_URL }}/rest/v1/"
+            "${{ secrets.SUPABASE_URL }}/rest/v1/")
           
-          echo "Successfully pinged Supabase!"
+          echo "HTTP Status: $HTTP_STATUS"
+          if [ "$HTTP_STATUS" -eq 200 ] || [ "$HTTP_STATUS" -eq 400 ] || [ "$HTTP_STATUS" -eq 401 ] || [ "$HTTP_STATUS" -eq 404 ]; then
+            echo "Successfully pinged Supabase!"
+          else
+            echo "Failed to ping Supabase, unexpected status: $HTTP_STATUS"
+            exit 1
+          fi
