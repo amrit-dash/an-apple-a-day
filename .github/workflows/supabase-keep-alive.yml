@@ -2,8 +2,8 @@ name: Supabase Keep Alive Ping
 
 on:
   schedule:
-    # Runs every day at midnight UTC to prevent Supabase Free Tier auto-pausing
-    - cron: "0 0 * * *"
+    # Runs every day at 02:37 UTC (08:07 AM IST) to avoid peak GitHub Actions congestion and prevent Supabase auto-pausing
+    - cron: "37 2 * * *"
   workflow_dispatch:
     # Allows you to run this workflow manually from the Actions tab
 
