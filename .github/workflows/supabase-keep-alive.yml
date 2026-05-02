@@ -24,14 +24,15 @@ jobs:
 
       - name: Ping Supabase REST API
         run: |
-          # A simple GET request to the Auth Health API root is enough to count as activity
-          # We check the HTTP status code. It should return 200 OK.
+          # We query an actual table ('doctors') to ensure it counts as database activity.
+          # Hitting /auth/v1/health does not touch the Postgres database and will not prevent auto-pausing.
           HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
             -H "apikey: ${{ secrets.SUPABASE_ANON_KEY }}" \
-            "${{ secrets.SUPABASE_URL }}/auth/v1/health")
+            -H "Authorization: Bearer ${{ secrets.SUPABASE_ANON_KEY }}" \
+            "${{ secrets.SUPABASE_URL }}/rest/v1/doctors?select=id&limit=1")
           
           echo "HTTP Status: $HTTP_STATUS"
-          if [ "$HTTP_STATUS" -eq 200 ]; then
+          if [ "$HTTP_STATUS" -eq 200 ] || [ "$HTTP_STATUS" -eq 204 ]; then
             echo "Successfully pinged Supabase!"
           else
             echo "Failed to ping Supabase, unexpected status: $HTTP_STATUS"
