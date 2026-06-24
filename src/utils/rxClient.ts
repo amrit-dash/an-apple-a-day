@@ -9,7 +9,7 @@ export async function savePrescription(data: any) {
             patient,
             medicines,
             diagnosis,
-            additionalNotes,
+            examinationFindings,
             suggestedLabTests
         } = data
 
@@ -65,7 +65,7 @@ export async function savePrescription(data: any) {
                 doctor_id: doctorId,
                 patient_id: patientId,
                 diagnosis,
-                additional_notes: additionalNotes,
+                examination_findings: examinationFindings,
                 suggested_lab_tests: suggestedLabTests
             })
             .select('id')
@@ -80,8 +80,10 @@ export async function savePrescription(data: any) {
             const itemsToInsert = validMedicines.map((m: any) => ({
                 prescription_id: prescription.id,
                 medicine_name: m.name,
+                dose: m.dose || null,
                 frequency: m.frequency,
-                duration: m.duration
+                duration: m.duration,
+                notes: m.notes || null
             }))
 
             const { error: itemsErr } = await supabase

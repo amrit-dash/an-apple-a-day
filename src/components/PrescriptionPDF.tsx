@@ -92,7 +92,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#4C8EAB',
     },
     tableColHeader: {
-        width: '33.33%',
+        width: '25%',
         borderStyle: 'solid',
         borderBottomWidth: 1,
         borderRightWidth: 1,
@@ -100,7 +100,7 @@ const styles = StyleSheet.create({
         padding: 6,
     },
     tableCol: {
-        width: '33.33%',
+        width: '25%',
         borderStyle: 'solid',
         borderBottomWidth: 1,
         borderRightWidth: 1,
@@ -115,6 +115,12 @@ const styles = StyleSheet.create({
     tableCell: {
         fontSize: 10,
         color: '#334155',
+    },
+    tableCellNote: {
+        fontSize: 8,
+        color: '#64748b',
+        marginTop: 2,
+        fontStyle: 'italic',
     },
     footer: {
         position: 'absolute',
@@ -229,12 +235,19 @@ export function PrescriptionPDF({ data }: { data: PDFData }) {
                         <View style={styles.table}>
                             <View style={[styles.tableRow, styles.tableHeaderRow]}>
                                 <View style={styles.tableColHeader}><Text style={styles.tableCellHeader}>Medicine</Text></View>
+                                <View style={styles.tableColHeader}><Text style={styles.tableCellHeader}>Dose</Text></View>
                                 <View style={styles.tableColHeader}><Text style={styles.tableCellHeader}>Frequency</Text></View>
                                 <View style={styles.tableColHeader}><Text style={styles.tableCellHeader}>Duration</Text></View>
                             </View>
                             {medicines.map((med, i) => (
                                 <View style={styles.tableRow} key={i}>
-                                    <View style={styles.tableCol}><Text style={styles.tableCell}>{med.medicine_name || med.name}</Text></View>
+                                    <View style={styles.tableCol}>
+                                        <Text style={styles.tableCell}>{med.medicine_name || med.name}</Text>
+                                        {(med.notes) && (
+                                            <Text style={styles.tableCellNote}>{med.notes}</Text>
+                                        )}
+                                    </View>
+                                    <View style={styles.tableCol}><Text style={styles.tableCell}>{med.dose || '—'}</Text></View>
                                     <View style={styles.tableCol}><Text style={styles.tableCell}>{med.frequency}</Text></View>
                                     <View style={styles.tableCol}><Text style={styles.tableCell}>{med.duration}</Text></View>
                                 </View>
@@ -253,11 +266,11 @@ export function PrescriptionPDF({ data }: { data: PDFData }) {
                     </View>
                 )}
 
-                {/* Notes */}
-                {prescription.additional_notes && (
+                {/* Examination Findings */}
+                {prescription.examination_findings && (
                     <View>
-                        <Text style={styles.sectionTitle}>ADDITIONAL NOTES</Text>
-                        <Text style={styles.textBlock}>{prescription.additional_notes}</Text>
+                        <Text style={styles.sectionTitle}>EXAMINATION FINDINGS</Text>
+                        <Text style={styles.textBlock}>{prescription.examination_findings}</Text>
                     </View>
                 )}
 

@@ -7,14 +7,16 @@ import { PrescriptionPDF } from '@/components/PrescriptionPDF'
 
 type PrescriptionItem = {
     medicine_name: string
+    dose: string
     frequency: string
     duration: string
+    notes: string
 }
 
 type Prescription = {
     id: string
     diagnosis: string
-    additional_notes: string
+    examination_findings: string
     suggested_lab_tests: string
     created_at: string
     prescription_items: PrescriptionItem[]

@@ -21,13 +21,15 @@ export default function PatientsPage() {
               prescriptions (
                 id,
                 diagnosis,
-                additional_notes,
+                examination_findings,
                 suggested_lab_tests,
                 created_at,
                 prescription_items (
                   medicine_name,
+                  dose,
                   frequency,
-                  duration
+                  duration,
+                  notes
                 )
               )
             `)

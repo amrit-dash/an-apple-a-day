@@ -19,8 +19,10 @@ type Patient = {
 
 type Medicine = {
     name: string
+    dose: string
     frequency: string
     duration: string
+    notes: string
     isCustomFreq: boolean
     isCustomDur: boolean
 }
@@ -38,13 +40,13 @@ export function RxForm({ doctor, initialPatients }: { doctor: any, initialPatien
     const [showPatientSuggestions, setShowPatientSuggestions] = useState(false)
 
     // Medicine State
-    const [medicines, setMedicines] = useState<Medicine[]>([{ name: '', frequency: '', duration: '', isCustomFreq: false, isCustomDur: false }])
+    const [medicines, setMedicines] = useState<Medicine[]>([{ name: '', dose: '', frequency: '', duration: '', notes: '', isCustomFreq: false, isCustomDur: false }])
     const [medSuggestions, setMedSuggestions] = useState<string[]>([])
     const [activeMedIndex, setActiveMedIndex] = useState<number | null>(null)
 
     // Rx Details State
     const [diagnosis, setDiagnosis] = useState('')
-    const [additionalNotes, setAdditionalNotes] = useState('')
+    const [examinationFindings, setExaminationFindings] = useState('')
     const [suggestedLabTests, setSuggestedLabTests] = useState('')
 
     useEffect(() => {
@@ -61,7 +63,7 @@ export function RxForm({ doctor, initialPatients }: { doctor: any, initialPatien
     }
 
     const addMedicineRow = () => {
-        setMedicines([...medicines, { name: '', frequency: '', duration: '', isCustomFreq: false, isCustomDur: false }])
+        setMedicines([...medicines, { name: '', dose: '', frequency: '', duration: '', notes: '', isCustomFreq: false, isCustomDur: false }])
     }
 
     const removeMedicineRow = (index: number) => {
@@ -155,8 +157,10 @@ export function RxForm({ doctor, initialPatients }: { doctor: any, initialPatien
             }
             return {
                 name: m.name,
+                dose: m.dose,
                 frequency: m.frequency,
-                duration: finalDuration
+                duration: finalDuration,
+                notes: m.notes
             }
         })
 
@@ -165,7 +169,7 @@ export function RxForm({ doctor, initialPatients }: { doctor: any, initialPatien
             patient,
             medicines: processedMedicines,
             diagnosis,
-            additionalNotes,
+            examinationFindings,
             suggestedLabTests
         })
 
@@ -179,7 +183,7 @@ export function RxForm({ doctor, initialPatients }: { doctor: any, initialPatien
                 prescription: {
                     created_at: new Date().toISOString(),
                     diagnosis,
-                    additional_notes: additionalNotes,
+                    examination_findings: examinationFindings,
                     suggested_lab_tests: suggestedLabTests,
                 },
                 medicines: processedMedicines.filter(m => m.name.trim() !== '')
@@ -192,9 +196,9 @@ export function RxForm({ doctor, initialPatients }: { doctor: any, initialPatien
     const resetForm = () => {
         setSuccessData(null)
         setPatient({ name: '', custom_patient_id: '', age: null, gender: 'Male', contact: '' })
-        setMedicines([{ name: '', frequency: '', duration: '', isCustomFreq: false, isCustomDur: false }])
+        setMedicines([{ name: '', dose: '', frequency: '', duration: '', notes: '', isCustomFreq: false, isCustomDur: false }])
         setDiagnosis('')
-        setAdditionalNotes('')
+        setExaminationFindings('')
         setSuggestedLabTests('')
     }
 
@@ -358,126 +362,150 @@ export function RxForm({ doctor, initialPatients }: { doctor: any, initialPatien
                 <div className="p-6 space-y-6">
 
                     {/* Medicines */}
-                    <div>
-                        <div className="space-y-3">
-                            {medicines.map((med, index) => (
-                                <div key={index} className="flex flex-col md:flex-row gap-3 items-start relative bg-slate-50/50 p-3 rounded-xl border border-slate-200">
-                                    <div className="flex-1 w-full relative">
-                                        <input
-                                            type="text"
-                                            value={med.name}
-                                            onChange={(e) => updateMedicineField(index, 'name', e.target.value)}
-                                            onBlur={() => setTimeout(() => setActiveMedIndex(null), 200)}
-                                            className="w-full rounded-lg border-slate-300 shadow-sm focus:border-[#4C8EAB] focus:ring-[#4C8EAB] sm:text-sm px-4 py-2 border text-[#1A202C] placeholder-slate-400"
-                                            placeholder="e.g. Paracetamol 500mg"
-                                        />
-                                        {activeMedIndex === index && medSuggestions.length > 0 && (
-                                            <ul className="absolute z-10 w-full bg-white mt-1 border border-slate-200 rounded-lg shadow-lg max-h-48 overflow-auto text-sm">
-                                                {medSuggestions.map(s => (
-                                                    <li
-                                                        key={s}
-                                                        className="px-4 py-2 hover:bg-slate-50 cursor-pointer text-slate-700"
-                                                        onClick={() => selectMedSuggestion(index, s)}
-                                                    >
-                                                        {s}
-                                                    </li>
-                                                ))}
-                                            </ul>
-                                        )}
-                                    </div>
-                                    <div className="w-full md:w-48 relative">
-                                        {med.isCustomFreq ? (
-                                            <div className="relative w-full flex items-center">
-                                                <input
-                                                    type="text"
-                                                    value={med.frequency}
-                                                    onChange={(e) => updateMedicineField(index, 'frequency', e.target.value)}
-                                                    className="w-full rounded-lg border-slate-300 shadow-sm focus:border-[#4C8EAB] focus:ring-[#4C8EAB] sm:text-sm px-4 py-2 border text-[#1A202C] placeholder-slate-400 pr-8"
-                                                    placeholder="Custom Frequency"
-                                                    autoFocus
-                                                />
-                                                <button
-                                                    onClick={() => revertCustomFrequency(index)}
-                                                    className="absolute right-2 text-slate-400 hover:text-slate-600 bg-white"
-                                                >
-                                                    <X className="w-4 h-4" />
-                                                </button>
-                                            </div>
-                                        ) : (
-                                            <div className="relative w-full">
-                                                <select
-                                                    value={med.frequency}
-                                                    onChange={(e) => handleFrequencySelect(index, e.target.value)}
-                                                    className="w-full rounded-lg border-slate-300 shadow-sm focus:border-[#4C8EAB] focus:ring-[#4C8EAB] sm:text-sm px-4 py-2 border text-[#1A202C] bg-white appearance-none pr-8"
-                                                >
-                                                    <option value="">Frequency...</option>
-                                                    <option value="Once daily">Once daily</option>
-                                                    <option value="Twice daily">Twice daily</option>
-                                                    <option value="Thrice daily">Thrice daily</option>
-                                                    <option value="As needed">As needed</option>
-                                                    <option value="Custom">Custom...</option>
-                                                </select>
-                                                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-slate-500">
-                                                    <ChevronDown className="w-4 h-4" />
-                                                </div>
-                                            </div>
-                                        )}
-                                    </div>
-                                    <div className="w-full md:w-40 relative">
-                                        {med.isCustomDur ? (
-                                            <div className="relative w-full flex items-center">
-                                                <input
-                                                    type="text"
-                                                    inputMode="numeric"
-                                                    pattern="[0-9]*"
-                                                    value={med.duration}
-                                                    onChange={(e) => updateMedicineField(index, 'duration', e.target.value.replace(/\D/g, ''))}
-                                                    className="w-full rounded-lg border-slate-300 shadow-sm focus:border-[#4C8EAB] focus:ring-[#4C8EAB] sm:text-sm pl-3 pr-20 py-2 border text-[#1A202C] placeholder-slate-400"
-                                                    placeholder="e.g. 10"
-                                                    autoFocus
-                                                />
-                                                <div className="absolute inset-y-0 right-0 flex items-center pr-2 gap-1.5">
-                                                    <span className="text-slate-500 text-sm pointer-events-none">days</span>
+                    <div className="space-y-3">
+                        {medicines.map((med, index) => (
+                            <div
+                                key={index}
+                                className="flex gap-3 bg-slate-50/50 p-3 rounded-xl border border-slate-200"
+                            >
+                                <div className="flex-1 min-w-0 space-y-3">
+                                    <div className="grid grid-cols-2 lg:grid-cols-[minmax(0,2.5fr)_minmax(0,1fr)_minmax(0,1.25fr)_minmax(0,1fr)] gap-3">
+                                        <div className="relative min-w-0">
+                                            <input
+                                                type="text"
+                                                value={med.name}
+                                                onChange={(e) => updateMedicineField(index, 'name', e.target.value)}
+                                                onBlur={() => setTimeout(() => setActiveMedIndex(null), 200)}
+                                                className="w-full rounded-lg border-slate-300 shadow-sm focus:border-[#4C8EAB] focus:ring-[#4C8EAB] sm:text-sm px-4 py-2 border text-[#1A202C] placeholder-slate-400 bg-white"
+                                                placeholder="e.g. Paracetamol 500mg"
+                                            />
+                                            {activeMedIndex === index && medSuggestions.length > 0 && (
+                                                <ul className="absolute z-10 w-full bg-white mt-1 border border-slate-200 rounded-lg shadow-lg max-h-48 overflow-auto text-sm">
+                                                    {medSuggestions.map(s => (
+                                                        <li
+                                                            key={s}
+                                                            className="px-4 py-2 hover:bg-slate-50 cursor-pointer text-slate-700"
+                                                            onClick={() => selectMedSuggestion(index, s)}
+                                                        >
+                                                            {s}
+                                                        </li>
+                                                    ))}
+                                                </ul>
+                                            )}
+                                        </div>
+                                        <div className="min-w-0">
+                                            <input
+                                                type="text"
+                                                value={med.dose}
+                                                onChange={(e) => updateMedicineField(index, 'dose', e.target.value)}
+                                                className="w-full rounded-lg border-slate-300 shadow-sm focus:border-[#4C8EAB] focus:ring-[#4C8EAB] sm:text-sm px-4 py-2 border text-[#1A202C] placeholder-slate-400 bg-white"
+                                                placeholder="e.g. 1 tab"
+                                            />
+                                        </div>
+                                        <div className="min-w-0 relative">
+                                            {med.isCustomFreq ? (
+                                                <div className="relative w-full flex items-center">
+                                                    <input
+                                                        type="text"
+                                                        value={med.frequency}
+                                                        onChange={(e) => updateMedicineField(index, 'frequency', e.target.value)}
+                                                        className="w-full rounded-lg border-slate-300 shadow-sm focus:border-[#4C8EAB] focus:ring-[#4C8EAB] sm:text-sm px-4 py-2 border text-[#1A202C] placeholder-slate-400 bg-white pr-8"
+                                                        placeholder="Custom Frequency"
+                                                        autoFocus
+                                                    />
                                                     <button
-                                                        onClick={() => revertCustomDuration(index)}
-                                                        className="text-slate-400 hover:text-slate-600 bg-white"
                                                         type="button"
+                                                        onClick={() => revertCustomFrequency(index)}
+                                                        className="absolute right-2 text-slate-400 hover:text-slate-600 bg-white"
                                                     >
                                                         <X className="w-4 h-4" />
                                                     </button>
                                                 </div>
-                                            </div>
-                                        ) : (
-                                            <div className="relative w-full">
-                                                <select
-                                                    value={med.duration}
-                                                    onChange={(e) => handleDurationSelect(index, e.target.value)}
-                                                    className="w-full rounded-lg border-slate-300 shadow-sm focus:border-[#4C8EAB] focus:ring-[#4C8EAB] sm:text-sm px-4 py-2 border text-[#1A202C] bg-white appearance-none pr-8"
-                                                >
-                                                    <option value="">Duration...</option>
-                                                    <option value="2 days">2 days</option>
-                                                    <option value="3 days">3 days</option>
-                                                    <option value="5 days">5 days</option>
-                                                    <option value="7 days">7 days</option>
-                                                    <option value="15 days">15 days</option>
-                                                    <option value="1 month">1 month</option>
-                                                    <option value="Custom">Custom...</option>
-                                                </select>
-                                                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-slate-500">
-                                                    <ChevronDown className="w-4 h-4" />
+                                            ) : (
+                                                <div className="relative w-full">
+                                                    <select
+                                                        value={med.frequency}
+                                                        onChange={(e) => handleFrequencySelect(index, e.target.value)}
+                                                        className="w-full rounded-lg border-slate-300 shadow-sm focus:border-[#4C8EAB] focus:ring-[#4C8EAB] sm:text-sm px-4 py-2 border text-[#1A202C] bg-white appearance-none pr-8"
+                                                    >
+                                                        <option value="">Frequency...</option>
+                                                        <option value="Once daily">Once daily</option>
+                                                        <option value="Twice daily">Twice daily</option>
+                                                        <option value="Thrice daily">Thrice daily</option>
+                                                        <option value="As needed">As needed</option>
+                                                        <option value="Custom">Custom...</option>
+                                                    </select>
+                                                    <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-slate-500">
+                                                        <ChevronDown className="w-4 h-4" />
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        )}
+                                            )}
+                                        </div>
+                                        <div className="min-w-0 relative">
+                                            {med.isCustomDur ? (
+                                                <div className="relative w-full flex items-center">
+                                                    <input
+                                                        type="text"
+                                                        inputMode="numeric"
+                                                        pattern="[0-9]*"
+                                                        value={med.duration}
+                                                        onChange={(e) => updateMedicineField(index, 'duration', e.target.value.replace(/\D/g, ''))}
+                                                        className="w-full rounded-lg border-slate-300 shadow-sm focus:border-[#4C8EAB] focus:ring-[#4C8EAB] sm:text-sm pl-3 pr-20 py-2 border text-[#1A202C] placeholder-slate-400 bg-white"
+                                                        placeholder="e.g. 10"
+                                                        autoFocus
+                                                    />
+                                                    <div className="absolute inset-y-0 right-0 flex items-center pr-2 gap-1.5">
+                                                        <span className="text-slate-500 text-sm pointer-events-none">days</span>
+                                                        <button
+                                                            onClick={() => revertCustomDuration(index)}
+                                                            className="text-slate-400 hover:text-slate-600 bg-white"
+                                                            type="button"
+                                                        >
+                                                            <X className="w-4 h-4" />
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            ) : (
+                                                <div className="relative w-full">
+                                                    <select
+                                                        value={med.duration}
+                                                        onChange={(e) => handleDurationSelect(index, e.target.value)}
+                                                        className="w-full rounded-lg border-slate-300 shadow-sm focus:border-[#4C8EAB] focus:ring-[#4C8EAB] sm:text-sm px-4 py-2 border text-[#1A202C] bg-white appearance-none pr-8"
+                                                    >
+                                                        <option value="">Duration...</option>
+                                                        <option value="2 days">2 days</option>
+                                                        <option value="3 days">3 days</option>
+                                                        <option value="5 days">5 days</option>
+                                                        <option value="7 days">7 days</option>
+                                                        <option value="15 days">15 days</option>
+                                                        <option value="1 month">1 month</option>
+                                                        <option value="Custom">Custom...</option>
+                                                    </select>
+                                                    <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-slate-500">
+                                                        <ChevronDown className="w-4 h-4" />
+                                                    </div>
+                                                </div>
+                                            )}
+                                        </div>
                                     </div>
-                                    <button
-                                        onClick={() => removeMedicineRow(index)}
-                                        className="p-2 mt-0.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors flex-shrink-0"
-                                    >
-                                        <Trash2 className="w-5 h-5" />
-                                    </button>
+                                    <input
+                                        type="text"
+                                        value={med.notes}
+                                        onChange={(e) => updateMedicineField(index, 'notes', e.target.value)}
+                                        className="w-full rounded-lg border-slate-300 shadow-sm focus:border-[#4C8EAB] focus:ring-[#4C8EAB] sm:text-sm px-4 py-2 border text-[#1A202C] placeholder-slate-400 bg-white"
+                                        placeholder="Medicine note (optional) — e.g. take after meals"
+                                    />
                                 </div>
-                            ))}
-                        </div>
+                                <button
+                                    type="button"
+                                    onClick={() => removeMedicineRow(index)}
+                                    className="self-center p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors flex-shrink-0"
+                                    aria-label="Remove medicine"
+                                >
+                                    <Trash2 className="w-5 h-5" />
+                                </button>
+                            </div>
+                        ))}
                     </div>
 
                     <div>
@@ -492,13 +520,13 @@ export function RxForm({ doctor, initialPatients }: { doctor: any, initialPatien
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium text-slate-700 mb-1">Additional Notes</label>
+                        <label className="block text-sm font-medium text-slate-700 mb-1">Examination Findings</label>
                         <textarea
                             rows={2}
-                            value={additionalNotes}
-                            onChange={(e) => setAdditionalNotes(e.target.value)}
+                            value={examinationFindings}
+                            onChange={(e) => setExaminationFindings(e.target.value)}
                             className="w-full rounded-lg border-slate-300 shadow-sm focus:border-[#4C8EAB] focus:ring-[#4C8EAB] sm:text-sm px-4 py-3 border text-[#1A202C] placeholder-slate-400"
-                            placeholder="Any specific instructions for the patient..."
+                            placeholder="Clinical examination findings..."
                         />
                     </div>
 
