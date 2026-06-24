@@ -33,7 +33,7 @@ CREATE TABLE public.prescriptions (
     patient_id UUID NOT NULL REFERENCES public.patients(id) ON DELETE CASCADE,
     doctor_id UUID NOT NULL REFERENCES public.doctors(id) ON DELETE CASCADE,
     diagnosis TEXT,
-    additional_notes TEXT,
+    examination_findings TEXT,
     suggested_lab_tests TEXT,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
 );
@@ -43,8 +43,10 @@ CREATE TABLE public.prescription_items (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     prescription_id UUID NOT NULL REFERENCES public.prescriptions(id) ON DELETE CASCADE,
     medicine_name TEXT NOT NULL,
+    dose TEXT,
     frequency TEXT,
-    duration TEXT
+    duration TEXT,
+    notes TEXT
 );
 
 -- Table: global_medicines
