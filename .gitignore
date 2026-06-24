@@ -29,9 +29,11 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
+debug.log
 
 # env files (can opt-in for committing if needed)
 .env*
+!.env.example
 
 # vercel
 .vercel
@@ -46,3 +48,10 @@ firebase-debug.log
 firebase-debug.*.log
 
 .kilo/
+
+# local tooling & junk (keep repo lean)
+# editor / backup files
+*.bak
+# supabase local CLI
+supabase/.temp/
+supabase/.branches/
