@@ -1,40 +1,109 @@
-name: Supabase Keep Alive Ping
+# Prevents Supabase free-tier projects from auto-pausing after ~7 days of database inactivity.
+# Auth/health endpoints do NOT count — this workflow issues a minimal REST SELECT so Postgres sees activity.
+name: Supabase Keep-Alive
 
 on:
   schedule:
-    # Runs every day at 02:37 UTC (08:07 AM IST) to avoid peak GitHub Actions congestion and prevent Supabase auto-pausing
+    # Daily at 02:37 UTC (08:07 IST) — well under the 7-day inactivity window.
     - cron: "37 2 * * *"
   workflow_dispatch:
-    # Allows you to run this workflow manually from the Actions tab
+    inputs:
+      verbose:
+        description: Print response body on success
+        required: false
+        default: false
+        type: boolean
+
+concurrency:
+  group: supabase-keep-alive
+  cancel-in-progress: false
 
 jobs:
-  ping-supabase:
+  ping-database:
+    name: Ping Supabase database
     runs-on: ubuntu-latest
+    timeout-minutes: 5
+
     steps:
-      - name: Check for required secrets
+      - name: Validate secrets and configuration
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+          KEEP_ALIVE_TABLE: ${{ vars.KEEP_ALIVE_TABLE }}
         run: |
-          if [ -z "$SUPABASE_URL" ] || [ -z "$SUPABASE_ANON_KEY" ]; then
-            echo "Error: SUPABASE_URL and SUPABASE_ANON_KEY must be set in repository secrets."
-            echo "Go to Settings > Secrets and variables > Actions to add them."
+          set -euo pipefail
+
+          missing=()
+          [ -z "${SUPABASE_URL:-}" ] && missing+=("SUPABASE_URL")
+          [ -z "${SUPABASE_ANON_KEY:-}" ] && missing+=("SUPABASE_ANON_KEY")
+
+          if [ "${#missing[@]}" -gt 0 ]; then
+            echo "::error::Missing required GitHub Actions secrets: ${missing[*]}"
+            echo "Add them at: Settings → Secrets and variables → Actions → Secrets"
             exit 1
           fi
 
-      - name: Ping Supabase REST API
+          case "$SUPABASE_URL" in
+            https://*.supabase.co) ;;
+            *)
+              echo "::warning::SUPABASE_URL does not look like a standard Supabase project URL"
+              ;;
+          esac
+
+          # Default matches schema.sql; override via repo variable KEEP_ALIVE_TABLE if needed.
+          TABLE="${KEEP_ALIVE_TABLE:-doctors}"
+          echo "KEEP_ALIVE_TABLE=${TABLE}" >> "$GITHUB_ENV"
+          echo "Using table: ${TABLE}"
+
+      - name: Ping Postgres via REST API
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+          VERBOSE: ${{ inputs.verbose }}
         run: |
-          # We query an actual table ('doctors') to ensure it counts as database activity.
-          # Hitting /auth/v1/health does not touch the Postgres database and will not prevent auto-pausing.
-          HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
-            -H "apikey: ${{ secrets.SUPABASE_ANON_KEY }}" \
-            -H "Authorization: Bearer ${{ secrets.SUPABASE_ANON_KEY }}" \
-            "${{ secrets.SUPABASE_URL }}/rest/v1/doctors?select=id&limit=1")
-          
-          echo "HTTP Status: $HTTP_STATUS"
-          if [ "$HTTP_STATUS" -eq 200 ] || [ "$HTTP_STATUS" -eq 204 ]; then
-            echo "Successfully pinged Supabase!"
-          else
-            echo "Failed to ping Supabase, unexpected status: $HTTP_STATUS"
+          set -euo pipefail
+
+          ENDPOINT="${SUPABASE_URL%/}/rest/v1/${KEEP_ALIVE_TABLE}?select=id&limit=1"
+          echo "Request: GET ${ENDPOINT%%\?*}?select=id&limit=1"
+
+          RESPONSE_FILE=$(mktemp)
+          trap 'rm -f "$RESPONSE_FILE"' EXIT
+
+          if ! HTTP_STATUS=$(curl -sS --max-time 30 --retry 2 --retry-delay 5 \
+            -o "$RESPONSE_FILE" -w "%{http_code}" \
+            -H "apikey: ${SUPABASE_ANON_KEY}" \
+            -H "Authorization: Bearer ${SUPABASE_ANON_KEY}" \
+            -H "Accept: application/json" \
+            -H "Prefer: count=none" \
+            "$ENDPOINT"); then
+            echo "::error::curl failed (network, DNS, or timeout)"
+            [ -s "$RESPONSE_FILE" ] && cat "$RESPONSE_FILE"
             exit 1
           fi
+
+          echo "HTTP ${HTTP_STATUS}"
+
+          case "$HTTP_STATUS" in
+            200|204)
+              echo "Keep-alive succeeded — database activity recorded."
+              if [ "${VERBOSE}" = "true" ]; then
+                echo "Response body:"
+                cat "$RESPONSE_FILE"
+              fi
+              ;;
+            401|403)
+              echo "::error::Authentication failed (HTTP ${HTTP_STATUS}). Check SUPABASE_ANON_KEY."
+              cat "$RESPONSE_FILE"
+              exit 1
+              ;;
+            404)
+              echo "::error::Table '${KEEP_ALIVE_TABLE}' not found (HTTP 404). Check KEEP_ALIVE_TABLE or run schema.sql."
+              cat "$RESPONSE_FILE"
+              exit 1
+              ;;
+            *)
+              echo "::error::Unexpected HTTP ${HTTP_STATUS}"
+              cat "$RESPONSE_FILE"
+              exit 1
+              ;;
+          esac
