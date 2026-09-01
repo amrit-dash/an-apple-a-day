@@ -77,6 +77,35 @@ This repo includes [`.github/workflows/supabase-keep-alive.yml`](.github/workflo
 
 The anon key is sufficient: RLS may return an empty row set, but the query still hits Postgres and resets the inactivity timer. Do **not** commit keys to the repo — use GitHub secrets only.
 
+### Why the workflow can silently die (and how it self-heals)
+
+GitHub **automatically disables scheduled workflows after 60 days of repository inactivity**. Workflow runs do *not* count as activity — only pushes do. This is what happened on 2026-08-24: the last commit was 2026-06-24, GitHub flipped the workflow to `disabled_inactivity`, the daily ping stopped, and Supabase paused the project seven days later.
+
+The workflow now has a second job, `refresh-repo-activity`, which pushes a dated `.github/keep-alive-heartbeat` commit whenever the repo has been quiet for 21 days. That resets the 60-day timer, so the cron cannot expire on its own.
+
+To re-enable a workflow that has already been disabled:
+
+```bash
+gh workflow enable "Supabase Keep-Alive"
+```
+
+### Recommended: a second, independent pinger
+
+The heartbeat removes the known failure mode, but everything still depends on GitHub Actions. For true redundancy, add one off-GitHub scheduler that hits the same endpoint. Any of these work:
+
+- **Google Cloud Scheduler** (the Firebase project already exists; 3 jobs/month are free)
+- **cron-job.org** or **UptimeRobot** — no code, just an HTTP GET with the `apikey` header
+- **Cloudflare Workers** cron trigger
+
+Endpoint to call:
+
+```
+GET https://<project>.supabase.co/rest/v1/doctors?select=id&limit=1
+Header: apikey: <anon key>
+```
+
+Two schedulers on different providers means neither one going quiet can pause the database.
+
 ## Optional: Google Sign-In
 
 Enable the Google provider in Supabase → Authentication → Providers, then add your OAuth client ID/secret. No extra env vars are needed in this app.
