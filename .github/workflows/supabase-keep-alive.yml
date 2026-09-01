@@ -107,3 +107,44 @@ jobs:
               exit 1
               ;;
           esac
+
+  # GitHub auto-disables scheduled workflows after 60 days of REPOSITORY inactivity.
+  # Workflow runs do not count as activity — only pushes do. This job pushes a dated
+  # heartbeat file whenever the repo has been quiet for 3 weeks, so the 60-day timer
+  # never expires and the cron above never silently dies.
+  refresh-repo-activity:
+    name: Refresh repo activity
+    needs: ping-database
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Push heartbeat commit if the repo has gone quiet
+        run: |
+          set -euo pipefail
+
+          QUIET_DAYS_THRESHOLD=21
+
+          LAST_COMMIT_EPOCH=$(git log -1 --format=%ct)
+          DAYS_QUIET=$(( ( $(date +%s) - LAST_COMMIT_EPOCH ) / 86400 ))
+          echo "Days since last commit: ${DAYS_QUIET} (threshold: ${QUIET_DAYS_THRESHOLD})"
+
+          if [ "$DAYS_QUIET" -lt "$QUIET_DAYS_THRESHOLD" ]; then
+            echo "Repository is active — no heartbeat needed."
+            exit 0
+          fi
+
+          date -u +"%Y-%m-%dT%H:%M:%SZ" > .github/keep-alive-heartbeat
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add .github/keep-alive-heartbeat
+          git commit -m "chore(ci): heartbeat to keep scheduled workflows enabled"
+          git push
+
+          echo "::notice::Pushed heartbeat — Actions inactivity timer reset."
