@@ -13,6 +13,11 @@ on:
         required: false
         default: false
         type: boolean
+      force_heartbeat:
+        description: Push a heartbeat commit even if the repo is not quiet yet
+        required: false
+        default: false
+        type: boolean
 
 concurrency:
   group: supabase-keep-alive
@@ -125,6 +130,8 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Push heartbeat commit if the repo has gone quiet
+        env:
+          FORCE_HEARTBEAT: ${{ inputs.force_heartbeat }}
         run: |
           set -euo pipefail
 
@@ -134,7 +141,7 @@ jobs:
           DAYS_QUIET=$(( ( $(date +%s) - LAST_COMMIT_EPOCH ) / 86400 ))
           echo "Days since last commit: ${DAYS_QUIET} (threshold: ${QUIET_DAYS_THRESHOLD})"
 
-          if [ "$DAYS_QUIET" -lt "$QUIET_DAYS_THRESHOLD" ]; then
+          if [ "$DAYS_QUIET" -lt "$QUIET_DAYS_THRESHOLD" ] && [ "${FORCE_HEARTBEAT}" != "true" ]; then
             echo "Repository is active — no heartbeat needed."
             exit 0
           fi
